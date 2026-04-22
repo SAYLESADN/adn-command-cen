@@ -143,6 +143,20 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;ba
 .bl-promote:active{transform:scale(.95)}
 .bl-promote:disabled{background:var(--border);color:var(--text-3);box-shadow:none;cursor:not-allowed;font-weight:700}
 .bl-promote:disabled:hover{transform:none;box-shadow:none}
+.bl-del{width:44px;height:44px;border:1.5px solid var(--border);border-radius:14px;background:var(--card);color:var(--text-3);cursor:pointer;font-family:inherit;flex-shrink:0;font-size:15px;transition:all .15s;display:flex;align-items:center;justify-content:center}
+.bl-del:hover{border-color:var(--danger);color:var(--danger);background:var(--danger-lt)}
+.bl-del:active{transform:scale(.92)}
+
+/* TASK-DETAIL SUBTASKS */
+.td-sub-list{display:flex;flex-direction:column;gap:4px;margin-top:6px}
+.td-sub{display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--bg);border:1px solid var(--border);border-radius:12px;min-height:48px;transition:background .15s}
+.td-sub:hover{background:var(--primary-soft)}
+.td-sub.done{background:var(--green-lt);border-color:#B8E6C8}
+.td-sub.done .td-sub-txt{text-decoration:line-through;color:var(--text-3)}
+.td-sub-txt{flex:1;font-size:14px;line-height:1.4;word-wrap:break-word;min-width:0}
+.td-sub-del{width:32px;height:32px;border:none;background:transparent;color:var(--text-3);cursor:pointer;font-size:16px;border-radius:8px;flex-shrink:0;font-family:inherit;transition:all .15s}
+.td-sub-del:hover{background:var(--danger-lt);color:var(--danger)}
+.td-sub-del:active{transform:scale(.88)}
 
 /* CALENDAR */
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
@@ -238,8 +252,9 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;ba
 @keyframes sheetUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
 @keyframes popIn{from{transform:scale(.94);opacity:0}to{transform:scale(1);opacity:1}}
 .modal h3{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;margin-bottom:16px;line-height:1.2}
-.modal input,.modal select,.modal textarea{width:100%;padding:14px 16px;border:1.5px solid var(--border);border-radius:12px;font-family:inherit;font-size:15px;color:var(--text);background:var(--bg);outline:none;margin-bottom:12px;min-height:48px;transition:border-color .15s}
-.modal input:focus,.modal select:focus,.modal textarea:focus{border-color:var(--primary);background:#fff}
+.modal input:not([type="checkbox"]):not([type="radio"]),.modal select,.modal textarea{width:100%;padding:14px 16px;border:1.5px solid var(--border);border-radius:12px;font-family:inherit;font-size:15px;color:var(--text);background:var(--bg);outline:none;margin-bottom:12px;min-height:48px;transition:border-color .15s}
+.modal input:not([type="checkbox"]):not([type="radio"]):focus,.modal select:focus,.modal textarea:focus{border-color:var(--primary);background:#fff}
+.modal input[type="checkbox"]{width:22px;height:22px;margin:0;accent-color:var(--primary);cursor:pointer;flex-shrink:0}
 .modal textarea{min-height:80px;resize:vertical;line-height:1.55}
 .modal-btns{display:flex;gap:10px;justify-content:flex-end;margin-top:14px;flex-wrap:wrap}
 .field-lbl{font-size:11px;font-weight:700;color:var(--text-2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.6px}
@@ -796,13 +811,15 @@ function openMtgModal(id){
   I('m-meeting').classList.add('open');
 }
 function saveMeeting(){
-  const t=I('mtgTitle').value.trim();if(!t)return;
-  const data={title:t,date:I('mtgDate').value||new Date().toISOString(),attendees:I('mtgAtt').value.trim(),purpose:I('mtgPurpose').value.trim(),agenda:I('mtgAgenda').value.trim(),duration:I('mtgDur').value,notes:'',actions:''};
-  if(_editMtg){const m=S.meetings.find(x=>x.id===_editMtg);if(m)Object.assign(m,data);toast('Updated')}
+  const t=I('mtgTitle').value.trim();
+  if(!t){toast('Needs a title.');I('mtgTitle').focus();return}
+  const rawDate=I('mtgDate').value;
+  const data={title:t,date:rawDate?new Date(rawDate).toISOString():new Date().toISOString(),attendees:I('mtgAtt').value.trim(),purpose:I('mtgPurpose').value.trim(),agenda:I('mtgAgenda').value.trim(),duration:I('mtgDur').value||'30',notes:'',actions:''};
+  if(_editMtg){const m=S.meetings.find(x=>x.id===_editMtg);if(m){Object.assign(m,data);toast('Updated')}else{toast('Meeting not found');return}}
   else{S.meetings.push({id:uid(),...data});toast('Created')}
   _editMtg=null;save();closeModal('m-meeting');render();
 }
-function delMeeting(id){if(!confirm('Delete?'))return;S.meetings=S.meetings.filter(m=>m.id!==id);save();render()}
+function delMeeting(id){S.meetings=S.meetings.filter(m=>m.id!==id);save();render();toast('Meeting deleted')}
 
 // ══════════════════════════════════════
 // EMAIL UPLOAD
@@ -1068,7 +1085,8 @@ async function readPencil(){
 // ══════════════════════════════════════
 // COPILOT PASTE — smart sorting
 // ══════════════════════════════════════
-function openCopilot(){I('copilotArea').value='';I('copilotPreview').style.display='none';I('m-copilot').classList.add('open')}
+let _copilotParsed=null;
+function openCopilot(){_copilotParsed=null;I('copilotArea').value='';I('copilotPreview').style.display='none';I('m-copilot').classList.add('open')}
 
 async function processCopilot(){
   const raw=I('copilotArea').value.trim();
@@ -1118,8 +1136,10 @@ Rules:
     if(parsed.decisions&&parsed.decisions.length)prev+='<div style="margin-bottom:6px"><b>'+parsed.decisions.length+' decision'+(parsed.decisions.length>1?'s':'')+':</b><br>'+parsed.decisions.map(d=>'• '+esc(d.text)).join('<br>')+'</div>';
     if(parsed.keyPoints&&parsed.keyPoints.length)prev+='<div><b>Key context:</b><br>'+parsed.keyPoints.map(k=>'• '+esc(k)).join('<br>')+'</div>';
     if(!parsed.tasks?.length&&!parsed.meetings?.length&&!parsed.decisions?.length)prev+='<div style="color:var(--text-3)">Nothing concrete found.</div>';
-    prev+='<div style="margin-top:10px;display:flex;gap:6px"><button class="btn btn-p btn-sm" onclick="commitCopilot(\'__PARSED__\')">Add All</button><button class="btn btn-s btn-sm" onclick="I(\'copilotPreview\').style.display=\'none\'">Cancel</button></div>';
-    I('copilotPreview').innerHTML=prev.replace('__PARSED__',encodeURIComponent(JSON.stringify(parsed)));
+    prev+='<div style="margin-top:10px;display:flex;gap:6px"><button class="btn btn-p btn-sm" onclick="commitCopilot()">Add All</button><button class="btn btn-s btn-sm" onclick="_copilotParsed=null;I(\'copilotPreview\').style.display=\'none\'">Cancel</button></div>';
+    _copilotParsed=parsed;
+    I('copilotPreview').innerHTML=prev;
+    I('copilotPreview').style.display='block';
 
     btn.textContent='🤖 Process with AI';btn.disabled=false;
   }catch(e){
@@ -1128,8 +1148,9 @@ Rules:
   }
 }
 
-function commitCopilot(encoded){
-  const parsed=JSON.parse(decodeURIComponent(encoded));
+function commitCopilot(){
+  const parsed=_copilotParsed;
+  if(!parsed){toast('Nothing to add.');return}
   let added={tasks:0,meetings:0,decisions:0};
   (parsed.tasks||[]).forEach(t=>{
     if(!t.title)return;
@@ -1156,6 +1177,7 @@ function commitCopilot(encoded){
     if(!S.copilotNotes)S.copilotNotes=[];
     S.copilotNotes.push({id:uid(),date:new Date().toISOString(),points:parsed.keyPoints,source:parsed.source||'copilot'});
   }
+  _copilotParsed=null;
   save();closeModal('m-copilot');render();
   const parts=[];
   if(added.tasks)parts.push(added.tasks+' task'+(added.tasks>1?'s':''));
@@ -1286,24 +1308,50 @@ function saveMtgNotes(id){const m=S.meetings.find(x=>x.id===id);if(!m)return;m.n
 function openTD(id){
   const t=S.tasks.find(x=>x.id===id);if(!t)return;
   const sc=scoreTask(t);
-  let cl='';if(t.subtasks&&t.subtasks.length){t.subtasks.forEach((s,i)=>{cl+='<div style="display:flex;align-items:center;gap:6px;padding:4px 0"><input type="checkbox" '+(s.done?'checked':'')+' onchange="toggleSub(\''+t.id+'\','+i+');openTD(\''+t.id+'\')" style="accent-color:var(--primary)"><span style="font-size:11px;'+(s.done?'text-decoration:line-through;color:var(--text-3)':'')+'">'+esc(s.text)+'</span></div>'})}
-  I('tdContent').innerHTML='<div style="display:flex;justify-content:space-between;align-items:flex-start"><h3>'+esc(t.title)+'</h3><div class="score '+scoreClass(sc)+'" style="position:static;width:28px;height:28px;font-size:10px">'+sc+'</div></div>'
-    +'<div style="display:flex;gap:8px;margin:10px 0"><div style="flex:1"><div class="field-lbl">Category</div><select id="td_cat" class="inp">'+Object.entries(CATS).map(([k,v])=>'<option value="'+k+'"'+(k===t.category?' selected':'')+'>'+v.l+'</option>').join('')+'</select></div>'
+  let cl='';
+  if(t.subtasks&&t.subtasks.length){
+    t.subtasks.forEach((s,i)=>{
+      cl+='<div class="td-sub'+(s.done?' done':'')+'">'
+        +'<input type="checkbox" '+(s.done?'checked':'')+' onchange="toggleSub(\''+t.id+'\','+i+')">'
+        +'<span class="td-sub-txt">'+esc(s.text)+'</span>'
+        +'<button class="td-sub-del" onclick="delSub(\''+t.id+'\','+i+')" title="Delete subtask">✕</button>'
+        +'</div>';
+    });
+  }
+  I('tdContent').innerHTML=''
+    +'<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px">'
+    +'<div style="flex:1"><div class="field-lbl">Task</div><input id="td_title" class="inp" value="'+esc(t.title)+'" style="font-weight:700;font-size:16px"></div>'
+    +'<div class="score '+scoreClass(sc)+'" style="position:static;margin-top:18px">'+sc+'</div>'
+    +'</div>'
+    +'<div style="display:flex;gap:8px;margin-bottom:6px"><div style="flex:1"><div class="field-lbl">Category</div><select id="td_cat" class="inp">'+Object.entries(CATS).map(([k,v])=>'<option value="'+k+'"'+(k===t.category?' selected':'')+'>'+v.l+'</option>').join('')+'</select></div>'
     +'<div style="flex:1"><div class="field-lbl">Priority</div><select id="td_pri" class="inp"><option value="high"'+(t.priority==='high'?' selected':'')+'>High</option><option value="medium"'+(t.priority==='medium'?' selected':'')+'>Medium</option><option value="low"'+(t.priority==='low'?' selected':'')+'>Low</option></select></div>'
     +'<div style="flex:1"><div class="field-lbl">Due</div><input type="date" id="td_due" class="inp" value="'+(t.due||'')+'"></div></div>'
     +'<div class="field-lbl">Notes</div><textarea id="td_notes" class="inp">'+esc(t.notes||'')+'</textarea>'
-    +(cl?'<div class="sec-lbl">Checklist</div>'+cl:'')
-    +'<div style="display:flex;gap:4px;margin-top:8px"><input id="td_cl_new" class="inp" placeholder="Add checklist item..." style="flex:1"><button class="btn btn-s btn-sm" onclick="tdAddCl(\''+t.id+'\')">+</button></div>'
-    +'<div class="modal-btns" style="margin-top:14px;justify-content:space-between">'
-    +'<button class="btn btn-d" onclick="deleteFromDetail(\''+t.id+'\')">🗑 Delete</button>'
+    +(cl?'<div class="sec-lbl">Checklist<span class="sec-line"></span></div><div class="td-sub-list">'+cl+'</div>':'')
+    +'<div style="display:flex;gap:6px;margin-top:10px"><input id="td_cl_new" class="inp" placeholder="Add checklist item…" style="flex:1" onkeydown="if(event.key===\'Enter\'){event.preventDefault();tdAddCl(\''+t.id+'\')}"><button class="btn btn-g btn-sm" onclick="tdAddCl(\''+t.id+'\')">+ Add</button></div>'
+    +'<div class="modal-btns" style="margin-top:18px;justify-content:space-between;gap:8px">'
+    +'<button class="btn btn-d" onclick="deleteFromDetail(\''+t.id+'\')">🗑 Delete task</button>'
     +'<div style="display:flex;gap:8px;flex-wrap:wrap">'
     +(t.active&&!t.done?'<button class="btn btn-s" onclick="demoteTask(\''+t.id+'\');closeModal(\'m-taskdetail\')">↓ Back to backlog</button>':'')
     +'<button class="btn btn-p" onclick="saveTD(\''+t.id+'\')">Save</button>'
     +'</div></div>';
   I('m-taskdetail').classList.add('open');
 }
-function saveTD(id){const t=S.tasks.find(x=>x.id===id);if(!t)return;t.notes=I('td_notes').value;t.category=I('td_cat').value;t.priority=I('td_pri').value;t.due=I('td_due').value||'';save();closeModal('m-taskdetail');render();toast('Saved')}
-function tdAddCl(id){const t=S.tasks.find(x=>x.id===id);if(!t)return;const v=I('td_cl_new').value.trim();if(!v)return;if(!t.subtasks)t.subtasks=[];t.subtasks.push({text:v,done:false});I('td_cl_new').value='';save();openTD(id)}
+function saveTD(id){
+  const t=S.tasks.find(x=>x.id===id);if(!t)return;
+  const newTitle=I('td_title').value.trim();
+  if(!newTitle){toast('Task needs a title.');I('td_title').focus();return}
+  t.title=newTitle;
+  t.notes=I('td_notes').value;t.category=I('td_cat').value;t.priority=I('td_pri').value;t.due=I('td_due').value||'';
+  save();closeModal('m-taskdetail');render();toast('Saved')
+}
+function tdAddCl(id){const t=S.tasks.find(x=>x.id===id);if(!t)return;const v=I('td_cl_new').value.trim();if(!v)return;if(!t.subtasks)t.subtasks=[];t.subtasks.push({text:v,done:false});I('td_cl_new').value='';save();openTD(id);I('td_cl_new').focus()}
+function delSub(tid,si){
+  const t=S.tasks.find(x=>x.id===tid);if(!t||!t.subtasks)return;
+  const [removed]=t.subtasks.splice(si,1);
+  save();openTD(tid);
+  if(removed)toast('Subtask removed');
+}
 
 // ══════════════════════════════════════
 // SAVE / LOAD
@@ -1445,13 +1493,14 @@ function rTasks(){
         +(t.rolled?'<span class="bl-m" style="color:var(--warn)">🔄×'+t.rolled+'</span>':'')
         +'<span class="bl-m" style="color:var(--text-3)">Day '+day+'</span>'
         +'</div></div>'
-        +'<button class="bl-promote" onclick="event.stopPropagation();promoteTask(\''+t.id+'\')" '+(canP?'':'disabled')+'>'+(canP?'Activate':'Full')+'</button></div>';
+        +'<button class="bl-promote" onclick="event.stopPropagation();promoteTask(\''+t.id+'\')" '+(canP?'':'disabled')+'>'+(canP?'Activate':'Full')+'</button>'
+        +'<button class="bl-del" onclick="event.stopPropagation();cutTask(\''+t.id+'\')" title="Delete">✕</button></div>';
     });
   });
   // Uncategorised
   const unc=backlog.filter(t=>!cats.includes(t.category));
   if(unc.length){h+='<div class="sec-lbl">Other ('+unc.length+')<span class="sec-line"></span></div>';
-    unc.forEach(t=>{h+='<div class="bl-item" onclick="openTD(\''+t.id+'\')"><div class="bl-score '+scoreClass(t._score)+'">'+t._score+'</div><div class="bl-body"><div class="bl-title">'+esc(t.title)+'</div></div><button class="bl-promote" onclick="event.stopPropagation();promoteTask(\''+t.id+'\')" '+(canP?'':'disabled')+'>'+(canP?'Activate':'Full')+'</button></div>'})}
+    unc.forEach(t=>{h+='<div class="bl-item" onclick="openTD(\''+t.id+'\')"><div class="bl-score '+scoreClass(t._score)+'">'+t._score+'</div><div class="bl-body"><div class="bl-title">'+esc(t.title)+'</div></div><button class="bl-promote" onclick="event.stopPropagation();promoteTask(\''+t.id+'\')" '+(canP?'':'disabled')+'>'+(canP?'Activate':'Full')+'</button><button class="bl-del" onclick="event.stopPropagation();cutTask(\''+t.id+'\')" title="Delete">✕</button></div>'})}
   h+='</div>';
   I('p-tasks').innerHTML=h;
 }
