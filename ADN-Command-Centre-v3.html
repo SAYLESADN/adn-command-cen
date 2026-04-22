@@ -8,6 +8,9 @@
 <meta name="apple-mobile-web-app-title" content="ADN CC">
 <meta name="theme-color" content="#B8707A">
 <title>ADN Command Centre</title>
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="./icon.svg">
+<link rel="icon" type="image/svg+xml" href="./icon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -1406,47 +1409,15 @@ function init(){
 loadState().then(init).catch(e=>{console.warn('Boot failed, using defaults:',e);init()});
 
 // ══════════════════════════════════════
-// PWA — MANIFEST + SERVICE WORKER
+// PWA — SERVICE WORKER REGISTRATION
+// Manifest + icon + apple-touch-icon declared in <head>
 // ══════════════════════════════════════
-(function setupPWA(){
-  const iconSvg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="96" fill="#B8707A"/><text x="256" y="200" text-anchor="middle" font-family="serif" font-size="160" font-weight="700" fill="#FFF">ADN</text><text x="256" y="340" text-anchor="middle" font-family="sans-serif" font-size="60" font-weight="600" fill="#F2E0E3">COMMAND</text><text x="256" y="400" text-anchor="middle" font-family="sans-serif" font-size="60" font-weight="600" fill="#F2E0E3">CENTRE</text><circle cx="130" cy="440" r="16" fill="#7EA87A"/><circle cx="256" cy="440" r="16" fill="#C9A87C" opacity=".6"/><circle cx="382" cy="440" r="16" fill="#EDE8E3" opacity=".4"/></svg>`;
-  const iconB64='data:image/svg+xml;base64,'+btoa(iconSvg);
-
-  const manifest={
-    name:'ADN Command Centre',
-    short_name:'ADN CC',
-    description:'Personal command centre — Rule of 3, AI-powered, iPad-first',
-    start_url:'.',
-    display:'standalone',
-    orientation:'any',
-    theme_color:'#B8707A',
-    background_color:'#FBF8F5',
-    icons:[{src:iconB64,sizes:'512x512',type:'image/svg+xml',purpose:'any'}]
-  };
-  const manifestBlob=new Blob([JSON.stringify(manifest)],{type:'application/json'});
-  const manifestUrl=URL.createObjectURL(manifestBlob);
-  const link=document.createElement('link');link.rel='manifest';link.href=manifestUrl;document.head.appendChild(link);
-
-  const applIcon=document.createElement('link');applIcon.rel='apple-touch-icon';applIcon.href=iconB64;document.head.appendChild(applIcon);
-
-  const swCode=`
-const CACHE='adn-cc-v3';
-const ASSETS=[self.location.href];
-self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting()))});
-self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
-self.addEventListener('fetch',e=>{
-  const url=new URL(e.request.url);
-  if(url.hostname==='api.anthropic.com'){e.respondWith(fetch(e.request));return}
-  if(url.hostname==='fonts.googleapis.com'||url.hostname==='fonts.gstatic.com'){
-    e.respondWith(caches.open(CACHE).then(c=>c.match(e.request).then(r=>r||fetch(e.request).then(nr=>{c.put(e.request,nr.clone());return nr}))));return}
-  e.respondWith(fetch(e.request).catch(()=>caches.match(e.request)));
-});`;
-  if('serviceWorker' in navigator){
-    const swBlob=new Blob([swCode],{type:'application/javascript'});
-    const swUrl=URL.createObjectURL(swBlob);
-    navigator.serviceWorker.register(swUrl,{scope:'.'}).catch(e=>console.warn('SW registration failed:',e));
-  }
-})();
+if('serviceWorker' in navigator && location.protocol!=='file:'){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('./sw.js',{scope:'./'})
+      .catch(e=>console.warn('SW registration failed:',e));
+  });
+}
 
 </script>
 </body>
