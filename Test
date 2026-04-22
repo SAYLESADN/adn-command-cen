@@ -1,0 +1,12 @@
+Push the ADN Command Centre v3 app to this repo. The files are in the SAYLESADN/ADNZEL repo on the main branch. Grab these files and push them here to main:
+
+1. ADN-Command-Centre-v3.html (the app — single HTML file, ~96KB)
+2. ADN-Brain-File.json (context file)
+3. ADN-Command-Centre-Handoff.md (documentation)
+4. index.html (redirect to v3)
+5. .nojekyll (empty file, bypasses Jekyll)
+6. .github/workflows/static.yml (GitHub Pages static deploy workflow)
+
+After pushing, set up GitHub Pages to deploy via GitHub Actions (not Jekyll). The live URL should be <https://saylesadn.github.io/adn-command-centre/>
+
+This is a single-file PWA productivity tool — no build step, no dependencies. Just static files served as-is.
