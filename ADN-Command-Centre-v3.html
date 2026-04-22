@@ -201,16 +201,19 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;ba
 .chat-task{background:var(--primary-lt);padding:8px 14px;font-size:10px;color:var(--primary);font-weight:600;border-bottom:1px solid var(--border);flex-shrink:0}
 .chat-attach{padding:6px 14px;border-bottom:1px solid var(--border);flex-shrink:0;background:#FAFAFA}
 .chat-quick{display:flex;gap:3px;padding:6px 14px;border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap}
-.chat-qbtn{padding:4px 8px;border:1px solid var(--border);border-radius:12px;font-size:8px;font-weight:600;cursor:pointer;font-family:inherit;background:var(--card);color:var(--text-2)}
-.chat-qbtn:hover{border-color:var(--primary);color:var(--primary)}
-.chat-msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:8px}
-.chat-msg{max-width:85%;padding:9px 12px;border-radius:12px;font-size:11px;line-height:1.6;word-wrap:break-word}
-.chat-msg.user{align-self:flex-end;background:var(--primary);color:#fff;border-bottom-right-radius:4px}
-.chat-msg.ai{align-self:flex-start;background:var(--border-lt);color:var(--text);border-bottom-left-radius:4px}
-.chat-input-row{display:flex;gap:6px;padding:10px 14px;border-top:1px solid var(--border);flex-shrink:0}
-.chat-input{flex:1;padding:9px 12px;border:1px solid var(--border);border-radius:18px;font-size:11px;font-family:inherit;outline:none}
-.chat-input:focus{border-color:var(--primary)}
-.chat-send{width:36px;height:36px;border:none;border-radius:50%;background:var(--primary);color:#fff;font-size:14px;cursor:pointer}
+.chat-qbtn{min-height:36px;padding:8px 14px;border:1.5px solid var(--border);border-radius:14px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;background:var(--card);color:var(--text-2);transition:all .15s;white-space:nowrap}
+.chat-qbtn:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-soft)}
+.chat-qbtn:active{transform:scale(.96)}
+.chat-msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px}
+.chat-msg{max-width:85%;padding:12px 16px;border-radius:18px;font-size:14px;line-height:1.55;word-wrap:break-word}
+.chat-msg.user{align-self:flex-end;background:var(--sunset);color:#fff;border-bottom-right-radius:6px;box-shadow:0 3px 10px rgba(255,92,130,.22)}
+.chat-msg.ai{align-self:flex-start;background:var(--border-lt);color:var(--text);border-bottom-left-radius:6px}
+.chat-op{align-self:center;background:var(--sunset-soft);color:var(--primary);border:1.5px solid var(--primary-lt);padding:6px 14px;border-radius:14px;font-size:12px;font-weight:700;margin:2px 0;text-align:center;box-shadow:0 2px 6px rgba(255,92,130,.08)}
+.chat-input-row{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--border);flex-shrink:0;align-items:center;background:var(--card)}
+.chat-input{flex:1;min-height:44px;padding:12px 16px;border:1.5px solid var(--border);border-radius:22px;font-size:15px;font-family:inherit;outline:none;background:var(--bg);transition:border-color .15s}
+.chat-input:focus{border-color:var(--primary);background:#fff}
+.chat-send{width:44px;height:44px;border:none;border-radius:50%;background:var(--sunset);color:#fff;font-size:18px;font-weight:800;cursor:pointer;box-shadow:0 4px 12px rgba(255,92,130,.28);flex-shrink:0;transition:transform .15s}
+.chat-send:active{transform:scale(.92)}
 
 /* PENCIL */
 .pencil-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:400;align-items:center;justify-content:center}
@@ -876,6 +879,78 @@ function buildAttContent(t){
 // CHAT
 // ══════════════════════════════════════
 let _chatTaskId=null;
+
+// Tools the chat AI can call to mutate the current task
+const CHAT_TOOLS=[
+  {name:'add_subtasks',description:'Add checklist items to the current task. Use whenever you break the task down, produce a plan, or list steps — actually add them instead of pasting a bullet list.',input_schema:{type:'object',properties:{items:{type:'array',items:{type:'string'},description:'Plain-text subtask descriptions, one per entry'}},required:['items']}},
+  {name:'complete_subtask',description:'Mark an existing subtask as done by matching a substring of its text (case-insensitive). Only call if the subtask already exists.',input_schema:{type:'object',properties:{match:{type:'string',description:'Unique substring of the subtask text to tick off'}},required:['match']}},
+  {name:'update_notes',description:'Append to or replace the task notes. Use to capture decisions, links, names, context Sarah shares. Append by default; only replace if she explicitly asks to rewrite.',input_schema:{type:'object',properties:{mode:{type:'string',enum:['append','replace']},text:{type:'string'}},required:['mode','text']}},
+  {name:'set_priority',description:'Change the priority of the current task.',input_schema:{type:'object',properties:{priority:{type:'string',enum:['high','medium','low']}},required:['priority']}},
+  {name:'set_due_date',description:'Set the due date (YYYY-MM-DD). Pass an empty string to clear it.',input_schema:{type:'object',properties:{due:{type:'string'}},required:['due']}}
+];
+
+function applyChatTool(name,input){
+  const t=S.tasks.find(x=>x.id===_chatTaskId);
+  if(!t)return{ok:false,msg:'Task not found',chip:'⚠ Task not found'};
+  try{
+    if(name==='add_subtasks'){
+      if(!t.subtasks)t.subtasks=[];
+      const items=(input.items||[]).map(s=>(s||'').trim()).filter(Boolean);
+      if(!items.length)return{ok:false,msg:'No items provided',chip:'⚠ No subtasks to add'};
+      items.forEach(x=>t.subtasks.push({text:x,done:false}));
+      return{ok:true,msg:'Added '+items.length+' subtasks',chip:'✓ Added '+items.length+' subtask'+(items.length!==1?'s':'')};
+    }
+    if(name==='complete_subtask'){
+      const n=(input.match||'').toLowerCase().trim();
+      if(!n)return{ok:false,msg:'No match string',chip:'⚠ No match given'};
+      const s=(t.subtasks||[]).find(x=>!x.done&&x.text.toLowerCase().includes(n));
+      if(!s)return{ok:false,msg:'No matching open subtask for "'+input.match+'"',chip:'⚠ No subtask matched'};
+      s.done=true;
+      const short=s.text.length>40?s.text.slice(0,40)+'…':s.text;
+      return{ok:true,msg:'Ticked off: '+s.text,chip:'✓ Done: '+short};
+    }
+    if(name==='update_notes'){
+      const text=(input.text||'').trim();if(!text)return{ok:false,msg:'Empty note text',chip:'⚠ Empty note'};
+      if(input.mode==='replace')t.notes=text;
+      else t.notes=(t.notes&&t.notes.trim()?t.notes.trim()+'\n\n':'')+text;
+      return{ok:true,msg:'Notes updated',chip:'✓ Notes '+(input.mode==='replace'?'replaced':'updated')};
+    }
+    if(name==='set_priority'){
+      if(!['high','medium','low'].includes(input.priority))return{ok:false,msg:'Invalid priority',chip:'⚠ Invalid priority'};
+      t.priority=input.priority;
+      return{ok:true,msg:'Priority set to '+input.priority,chip:'✓ Priority → '+input.priority};
+    }
+    if(name==='set_due_date'){
+      const d=(input.due||'').trim();
+      if(d&&!/^\d{4}-\d{2}-\d{2}$/.test(d))return{ok:false,msg:'Bad date format',chip:'⚠ Bad date'};
+      t.due=d;
+      return{ok:true,msg:'Due '+(d||'cleared'),chip:'✓ Due → '+(d||'cleared')};
+    }
+    return{ok:false,msg:'Unknown tool: '+name,chip:'⚠ Unknown op'};
+  }catch(e){return{ok:false,msg:'Error: '+e.message,chip:'⚠ '+e.message}}
+}
+
+function chatSysPrompt(t,attNames){
+  const subs=t.subtasks&&t.subtasks.length?'\nCurrent subtasks:\n'+t.subtasks.map(s=>(s.done?'[✓] ':'[ ] ')+s.text).join('\n'):'';
+  return `You are Sarah's task assistant inside the ADN Command Centre — best-mate tone, bitchy when she needs it, never cruel. You help her DO this task, not narrate around it.
+
+Task: "${t.title}" (${(CATS[t.category]||{}).l||t.category} · effort ${t.effort} · priority ${t.priority||'medium'} · day ${Math.round((new Date()-new Date(t.created))/864e5)+1} · rolled ${t.rolled||0}×)${t.due?' · due '+t.due:''}${t.notes?'\nNotes: '+t.notes:''}${subs}
+${attNames||''}
+
+Tools — USE THEM, don't just describe:
+- add_subtasks: whenever you break the task down or produce a plan, ADD the subtasks. Don't paste a bullet list in text — call the tool.
+- complete_subtask: when Sarah says one's done, tick it off.
+- update_notes (append by default): capture decisions, names, context Sarah shares. Replace only if she explicitly asks.
+- set_priority / set_due_date: if she names a new priority or deadline, update them.
+
+After calling a tool, do NOT re-list what you just added — the user sees a confirmation chip. Just comment briefly or ask the next thing.
+
+Voice: direct, British English, warm but firm. Name the people in the brain file. Ban: "you've got this", "amazing", "incredible", motivational waffle.
+Context: ${buildCtx()}
+Days to UAT: ${daysTo('2026-05-18')}. Days to Go Live: ${daysTo('2026-06-16')}.
+Reply max 250 words.`;
+}
+
 function openChat(tid){
   const t=S.tasks.find(x=>x.id===tid);if(!t)return;_chatTaskId=tid;
   I('chatTaskTitle').textContent=t.title;
@@ -888,34 +963,66 @@ function closeChat(){I('chatOverlay').classList.remove('open');I('chatDrawer').c
 function renderChat(){
   const msgs=S.chatHistory[_chatTaskId]||[];
   let h='<div class="chat-msg ai">Right. Tell me what\'s actually in the way — not the plan, the block.</div>';
-  msgs.forEach(m=>{h+='<div class="chat-msg '+(m.role==='user'?'user':'ai')+'">'+esc(m.content).replace(/\n/g,'<br>')+'</div>'});
+  msgs.forEach(m=>{
+    if(m.role==='op')h+='<div class="chat-op">'+esc(m.content)+'</div>';
+    else h+='<div class="chat-msg '+(m.role==='user'?'user':'ai')+'">'+esc(m.content).replace(/\n/g,'<br>')+'</div>';
+  });
   I('chatMsgs').innerHTML=h;I('chatMsgs').scrollTop=I('chatMsgs').scrollHeight;
 }
 function chatQ(msg){I('chatInput').value=msg;sendChat()}
 async function sendChat(){
   const inp=I('chatInput').value.trim();if(!inp||!_chatTaskId)return;
   const t=S.tasks.find(x=>x.id===_chatTaskId);if(!t)return;
+  if(!S.apiKey){toast('Need API key in Settings.');return}
   if(!S.chatHistory[_chatTaskId])S.chatHistory[_chatTaskId]=[];
   S.chatHistory[_chatTaskId].push({role:'user',content:inp});
   I('chatInput').value='';renderChat();
-  I('chatMsgs').innerHTML+='<div class="chat-msg ai" style="color:var(--text-3);font-style:italic" id="chatLoading">Thinking...</div>';
-  I('chatMsgs').scrollTop=I('chatMsgs').scrollHeight;
-  const attBlocks=buildAttContent(t);const attNames=t.attachments&&t.attachments.length?'Attachments: '+t.attachments.map(a=>a.name).join(', '):'';
+  const showLoading=()=>{const existing=document.getElementById('chatLoading');if(existing)return;const el=document.createElement('div');el.className='chat-msg ai';el.id='chatLoading';el.style.color='var(--text-3)';el.style.fontStyle='italic';el.textContent='Thinking…';I('chatMsgs').appendChild(el);I('chatMsgs').scrollTop=I('chatMsgs').scrollHeight};
+  const hideLoading=()=>{const ld=document.getElementById('chatLoading');if(ld)ld.remove()};
+  showLoading();
+
+  // Build API messages from history (skip op chips; attach files on first user turn)
+  const attBlocks=buildAttContent(t);
+  const attNames=t.attachments&&t.attachments.length?'Attachments: '+t.attachments.map(a=>a.name).join(', '):'';
   const apiMsgs=[];let attDone=false;
   S.chatHistory[_chatTaskId].forEach(m=>{
+    if(m.role==='op')return;
     if(m.role==='user'&&!attDone&&attBlocks.length){apiMsgs.push({role:'user',content:[...attBlocks,{type:'text',text:m.content}]});attDone=true}
     else apiMsgs.push({role:m.role==='user'?'user':'assistant',content:m.content});
   });
-  const sys=`You are Sarah's task assistant. Help her ACTUALLY COMPLETE this task.
-Task: "${t.title}" (${(CATS[t.category]||{}).l||t.category}, ${t.effort}, day ${Math.round((new Date()-new Date(t.created))/864e5)+1}, rolled ${t.rolled||0}x).
-${t.subtasks&&t.subtasks.length?'Subtasks: '+t.subtasks.map(s=>(s.done?'[DONE] ':'')+s.text).join(', '):''}.
-${t.notes?'Notes: '+t.notes:''}. ${attNames}
-${buildCtx()}
-Rules: Draft actual content. Be specific. Reference real people and systems. Tone: direct, warm, slightly sassy. ${daysTo('2026-05-18')} days to UAT. ${daysTo('2026-06-16')} days to Go Live.
-Max 300 words.`;
-  const r=await callAI(sys,apiMsgs,1000);
-  const ld=document.getElementById('chatLoading');if(ld)ld.remove();
-  S.chatHistory[_chatTaskId].push({role:'assistant',content:r});renderChat();
+
+  const sys=chatSysPrompt(t,attNames);
+  const maxIter=4;
+  let errored=false;
+  for(let iter=0;iter<maxIter;iter++){
+    try{
+      const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',
+        headers:{'Content-Type':'application/json','x-api-key':S.apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+        body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1200,system:sys,tools:CHAT_TOOLS,messages:apiMsgs})
+      });
+      if(!r.ok){const txt=await r.text();S.chatHistory[_chatTaskId].push({role:'assistant',content:'API error ('+r.status+'): '+(r.status===401?'Invalid key.':r.status===429?'Rate limited.':txt.slice(0,140))});errored=true;break}
+      const d=await r.json();
+      if(d.error){S.chatHistory[_chatTaskId].push({role:'assistant',content:'Error: '+d.error.message});errored=true;break}
+      const content=d.content||[];
+      const textBlocks=content.filter(c=>c.type==='text').map(c=>c.text).join('\n').trim();
+      const toolUses=content.filter(c=>c.type==='tool_use');
+
+      if(textBlocks)S.chatHistory[_chatTaskId].push({role:'assistant',content:textBlocks});
+
+      if(!toolUses.length||d.stop_reason!=='tool_use')break;
+
+      const toolResults=[];
+      for(const tu of toolUses){
+        const res=applyChatTool(tu.name,tu.input||{});
+        S.chatHistory[_chatTaskId].push({role:'op',content:res.chip});
+        toolResults.push({type:'tool_result',tool_use_id:tu.id,content:res.msg,is_error:!res.ok});
+      }
+      apiMsgs.push({role:'assistant',content:content});
+      apiMsgs.push({role:'user',content:toolResults});
+      save();hideLoading();renderChat();showLoading();
+    }catch(e){S.chatHistory[_chatTaskId].push({role:'assistant',content:'Connection failed: '+e.message});errored=true;break}
+  }
+  hideLoading();save();renderChat();render();
 }
 
 // ══════════════════════════════════════
