@@ -1,0 +1,244 @@
+{
+  "version": "1.0",
+  "lastUpdated": "2026-04-10",
+  "updatedBy": "Claude session",
+  "user": {
+    "name": "Sarah",
+    "role": "Project Manager",
+    "company": "Monsoon Accessorize",
+    "dualResponsibilities": [
+      "HCM Air Implementation",
+      "Payroll & Reward"
+    ],
+    "workStyle": "iPad-first, direct, tests iteratively, hates waffle, over-plans and under-executes, gets bored mid-task",
+    "primaryDevice": "iPad"
+  },
+  "project": {
+    "name": "HCM Air (Zellis) Implementation",
+    "description": "Migrating from ResourceLink to Zellis HCM Air with MyView as employee self-service portal",
+    "goLive": "2026-06-16",
+    "uatOpens": "2026-05-18",
+    "workforce": "~1,900 employees across Retail, DC, Head Office in UK, ROI, Jersey, Guernsey",
+    "groups": {
+      "Retail": "Store-based, variable hours, high turnover, Employee ID/password login on in-store devices",
+      "DC": "Shift/hourly, AllDay T&A, SSO login",
+      "HO": "Salaried, no T&A, SSO login"
+    }
+  },
+  "naming": {
+    "rules": [
+      "Always 'Monsoon Accessorize' \u2014 NEVER 'Adena Brands'",
+      "'project' not 'programme'",
+      "'Payroll & Reward' not 'BAU Payroll'",
+      "No HRBPs \u2014 correct title is 'Head of HR'",
+      "Document prefix: ADN-"
+    ]
+  },
+  "people": {
+    "katharineJakeman": {
+      "role": "HR Director",
+      "relationship": "Executive sponsor, receives exec reports, decides Power BI scope"
+    },
+    "marinaPalmas": {
+      "role": "HR/Change Lead",
+      "relationship": "Owns change, training, comms workstream"
+    },
+    "simonAbbott": {
+      "role": "Payroll Specialist",
+      "relationship": "Source of PE ID data, runs AHC spreadsheet, dependency for SRW sheets"
+    },
+    "davidWest": {
+      "role": "IT Lead",
+      "relationship": "IT Lead. Azure Client ID for MS365 integration \u2014 RESOLVED 10 Apr 2026."
+    },
+    "anneJohnson": {
+      "role": "IT SPOC",
+      "relationship": "IT contact for provisioning"
+    },
+    "steph": {
+      "role": "Zellis Implementation Contact",
+      "relationship": "Receives completed SRW"
+    }
+  },
+  "workstreams": {
+    "consultationTool": {
+      "status": "Live \u2014 v3",
+      "description": "Single-file HTML (~310KB) for managing consultation outcomes, letters, pro rata, impact analysis, final pay",
+      "features": [
+        "Two-file import (Wage Model + Master Employees), smart merge preserving progress",
+        "11 statuses: Redundancy, Leaver, Store Transfer, Hours Change, Role Change, Terms Change, TUPE, Trial Change, Retained, Pending, No Action",
+        "Context-aware consultation cards with blue guidance boxes",
+        "Branded letter generation (Monsoon/Accessorize logos, footers, 32 merge fields)",
+        "Pro rata pay for all 7 change statuses (260 working days, up to 3-period splits, retro detection)",
+        "Redundancy calculator with final pay (statutory + holiday + uplift + notice + PILON + retention + ad hoc)",
+        "Impact analysis with 9 cost panels and per-store drill-down",
+        "Leaver holiday balance (entitled vs taken, over/underpayment)",
+        "Feature toggles (Settings: Pay Review, Work Pattern, Coming Soon, Pro Rata Explanations)",
+        "AES-256 encrypted save/load JSON for SharePoint",
+        "10 export types with auto-sized Excel columns",
+        "Store filter for batch PDF generation"
+      ],
+      "recentFixes": [
+        "Save crash fixed \u2014 chunked base64 in encryptData (was String.fromCharCode spread overflow)",
+        "Blank PDFs fixed \u2014 all print functions use Blob URL via openPrintHtml()",
+        "DOB parsing fixed \u2014 2-digit year century detection (>26 = 1900s)",
+        "Data quality reporting on import (missing DOB, age validation)",
+        "Pro rata disclaimer on all outputs",
+        "Pro rata PDF refactored: shared buildProRataHtml() used by individual and batch",
+        "Batch PDF now combined single document with full calculation sections",
+        "Store filter on both batch PDF buttons"
+      ],
+      "inProgress": [
+        "Average Hours Database \u2014 WFM bulk import, stored in encrypted JSON, weekly update",
+        "12-week average (from notice date) for redundancy 'a week's pay' \u2014 higher of contractual vs average",
+        "52-week average for holiday pay uplift on variable-hours workers",
+        "Auto-feed into Calculator and Quotation",
+        "Power Automate flows (6 planned, 2 guides built)"
+      ],
+      "pendingDecisions": [
+        "Who sends letters and how (email/print/post/in person)",
+        "Where letters are filed (SharePoint now, HCM Air after Go Live, both)",
+        "Who records notice dates (Retail Ops on Wage Model or HRSS in tool)",
+        "Single operator or shared operation"
+      ]
+    },
+    "srw": {
+      "status": "In progress \u2014 Intelligent Payslips glossary (507 PEs) and FAQ (32 FAQs) completed",
+      "description": "System Requirements Workbook being completed for Zellis (Steph)",
+      "outstanding": [
+        "MyView Emails",
+        "MyPay Pro config (logo etc)",
+        "Power BI mapping",
+        "MyView App",
+        "MyView Notifications",
+        "MS365 Integration (Azure Client ID now available \u2014 can proceed)"
+      ],
+      "dependencies": [
+        "Simon Abbott \u2014 PE ID data"
+      ],
+      "completed": [
+        "Intelligent Payslips \u2014 507/507 In Use PEs have glossary text (228 new in blue)",
+        "MyPay Pro FAQ \u2014 32 FAQs with Monsoon-specific answers (18 new, 8 updated)",
+        "MyPay Pro additional parameters \u2014 9 settings configured"
+      ]
+    },
+    "payrollValidator": {
+      "status": "Phases 1-3 complete",
+      "description": "ADN Payroll Validator v3.0 \u2014 browser-only, multi-jurisdiction, multi-source validation tool",
+      "features": "18 rules, FMS cross-check, Parental Leave Tracker, Brain File with 26 sheets"
+    },
+    "processLibrary": {
+      "status": "Deployed",
+      "description": "ADN Flow Sketchpad \u2014 HTML process mapping tool on GitHub Pages",
+      "url": "github.com/SAYLESADN/PROMAP"
+    },
+    "projectPlanner": {
+      "status": "Built",
+      "description": "Task detail modals, AI contextual action buttons, bulk actions, drag-friendly cards",
+      "note": "Dashboard charts removed at Sarah's explicit request"
+    },
+    "holidayCompliance": {
+      "status": "On the horizon",
+      "description": "Bridge tool for April-June gap before MyView Go Live. Variable pay holiday pay calculation, enhanced entitlements"
+    },
+    "powerAutomate": {
+      "status": "Scoping",
+      "description": "MS365 account provisioning/decommissioning triggered by HCM Air events",
+      "owners": [
+        "David West",
+        "Anne Johnson"
+      ],
+      "scope": "In-scope vs post-Go Live TBC"
+    },
+    "myViewGuide": {
+      "status": "Draft complete",
+      "description": "Employee & Manager guide for MyView self-service portal",
+      "note": "Contains 'Adena Brands' references that need fixing to 'Monsoon Accessorize'"
+    },
+    "dataFlowVisual": {
+      "status": "Complete",
+      "description": "5-tab interactive HTML for Teams presentations (Data Flow, Key Features, Pro Rata & Pay, Impact Analysis, Decisions & Next Steps)"
+    },
+    "commandCentre": {
+      "status": "V1 built",
+      "description": "ADN Command Centre \u2014 personal productivity tool for managing Sarah's dual roles",
+      "features": [
+        "Rule of 3: max 3 active tasks at any time, physically enforced",
+        "5 views: Today, Backlog, Week, Milestones, Stats",
+        "5 AI commands: replan, what now, I'm stuck, be honest, force me \u2014 all use Claude API with Brain File context",
+        "Brain dump: paste a list of tasks, auto-detect effort and category, skip duplicates",
+        "Email import: single or bulk .eml/.msg upload, Claude extracts actions and creates tasks with subtasks",
+        "Calendar paste: copy from Outlook, parsed into time blocks",
+        "Task chatbot: per-task chat drawer with full conversation history, Claude API powered",
+        "Attachment support: PDF, images, CSV, text \u2014 sent to Claude for summarising, action extraction, drafting replies",
+        "Quick action buttons adapt when attachments present: Summarise, Actions from doc, Draft reply, What's missing",
+        "Analyst scoring: Urgency 30%, Impact 25%, Days Waiting 20%, Avoidance Risk 15%, Effort 10%",
+        "Rolled task tracking with escalating sass and shame board",
+        "Save/load JSON for persistence",
+        "API key management stored in localStorage",
+        "Power Automate email pipeline guide created for Outlook > SharePoint > tool integration"
+      ],
+      "designSystem": "Rose #D4748E, DM Sans, navy topbar, iPad-optimised",
+      "sassLevel": "Medium \u2014 playful but firm, calls out avoidance by name, references specific tasks and deadlines"
+    }
+  },
+  "resolvedBlockers": {
+    "note": "These are RESOLVED \u2014 do NOT raise as active issues",
+    "items": [
+      "REM-004 (SSP1) \u2014 resolved",
+      "REM-005 (ROI SSP) \u2014 resolved",
+      "Aegon file format T2-004 \u2014 resolved",
+      "David West \u2014 Azure Client ID for MS365 integration (resolved 10 Apr 2026)"
+    ]
+  },
+  "activeBlockers": [
+    "Simon Abbott \u2014 PE ID data needed for several SRW sheets",
+    "Monsoon logo as JPEG \u2014 needed for branding",
+    "Katharine \u2014 confirm which Power BI dashboards she wants",
+    "Pre-migration data cleansing (FPS deletions, MyView forms, authorisations) \u2014 MANDATORY, NOT STARTED"
+  ],
+  "systems": [
+    "Zellis HCM Air (replacing ResourceLink)",
+    "MyView (employee self-service portal)",
+    "SDWorx / WFM (timesheet, Retail new starters SFTP route)",
+    "AllDay T&A (DC only)",
+    "Aegon (pension)",
+    "GitHub / GitHub Pages (tool hosting)",
+    "Power BI (dashboards \u2014 scope TBC)",
+    "Power Automate (MS365 provisioning \u2014 scoping)",
+    "SharePoint (document storage, tool JSON files)"
+  ],
+  "keyReferences": {
+    "payElements": "ADN-Pay-Elements-Full.xlsx \u2014 580 PEs: 214 standard Zellis + 366 Monsoon bespoke",
+    "stores": "148 stores baked into Consultation Tool",
+    "weeklyPayCap": "\u00a3751/wk from 6 April 2026 for statutory redundancy",
+    "workingDays": "260 per year (Mon-Fri) for pro rata calculations",
+    "12weekAverage": "Counted back from NOTICE DATE (not leave date). Skip zero-pay weeks, replace with earlier. For redundancy 'a week's pay'",
+    "52weekAverage": "For holiday pay uplift on variable-hours workers. Skip zero-pay weeks, look back up to 104 weeks",
+    "holidayUplift": "Difference between holiday pay at contracted rate vs 52-week average rate"
+  },
+  "designSystem": {
+    "consultationTool": {
+      "font": "DM Sans",
+      "primary": "#D4748E",
+      "background": "#FBF9F7",
+      "accent": "#C9A96E"
+    },
+    "processLibrary": {
+      "font": "Inter",
+      "accent": "#7B61FF",
+      "background": "#F8F7FF"
+    },
+    "workshopDocs": {
+      "font": "Arial",
+      "palette": "navy/teal/amber/green"
+    }
+  },
+  "patterns": {
+    "dateFormat": "DD-MM-YYYY with hyphens",
+    "financialRounding": "Math.round(x*100)/100",
+    "proRataDisclaimer": "Estimated based on contracted hours only \u2014 does not include overtime or additional hours",
+    "fileDeployment": "Large HTML files (180KB+) must be dragged into GitHub upload UI, not copy-pasted",
+    "payrollSecurity": "Real payroll files must NEVER be saved to SharePoint or GitHub"
+  }
+}
