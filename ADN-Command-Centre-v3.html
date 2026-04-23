@@ -136,6 +136,57 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;ba
 .empty-card{background:var(--card);border:2px dashed var(--border);border-radius:var(--radius);padding:32px 22px;text-align:center;margin-bottom:14px}
 .empty-msg{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--text-2);margin-bottom:18px;line-height:1.35}
 
+/* RIGHT-NOW HERO + TIMELINE */
+.rn-card{background:var(--sunset);color:#fff;border-radius:var(--radius-lg);padding:22px 24px;margin-bottom:14px;box-shadow:0 10px 30px rgba(255,92,130,.28);position:relative;overflow:hidden}
+.rn-card::after{content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.18) 0%,transparent 70%);pointer-events:none}
+.rn-lbl{font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;opacity:.92;margin-bottom:6px;position:relative}
+.rn-title{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;line-height:1.2;margin-bottom:4px;position:relative}
+.rn-meta{font-size:13px;opacity:.85;font-weight:500;position:relative}
+.rn-card .btn{background:#fff;color:var(--primary);font-weight:800;border:none;box-shadow:0 4px 12px rgba(0,0,0,.1)}
+
+.tl-note{background:var(--card);border-left:4px solid var(--primary);border-radius:10px;padding:12px 16px;margin-bottom:14px;font-size:13px;line-height:1.5;color:var(--text-2);font-weight:500}
+.tl-ctrls{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:10px}
+.tl-ctrls-meta{font-size:11px;color:var(--text-3);font-weight:500}
+
+.tl-wrap{position:relative;padding-left:64px;padding-top:4px;padding-bottom:4px}
+.tl-rail{position:absolute;left:34px;top:8px;bottom:8px;width:2px;background:linear-gradient(180deg,var(--border) 0%,var(--primary-lt) 50%,var(--border) 100%);border-radius:2px}
+.tl-now{position:absolute;left:26px;width:18px;height:18px;border-radius:50%;background:var(--sunset);box-shadow:0 0 0 5px rgba(255,92,130,.24),0 2px 8px rgba(255,92,130,.5);z-index:2;animation:nowPulse 2s ease-in-out infinite}
+@keyframes nowPulse{0%,100%{box-shadow:0 0 0 5px rgba(255,92,130,.24),0 2px 8px rgba(255,92,130,.5)}50%{box-shadow:0 0 0 10px rgba(255,92,130,.12),0 2px 8px rgba(255,92,130,.5)}}
+
+.tl-block{position:relative;margin-bottom:10px;background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;transition:all .2s}
+.tl-block:hover{box-shadow:var(--shadow);border-color:var(--primary-lt)}
+.tl-block.task{border-left:5px solid var(--primary)}
+.tl-block.meeting{border-left:5px solid var(--gold);background:var(--gold-lt)}
+.tl-block.prep{border:1.5px dashed var(--border);background:transparent;opacity:.85}
+.tl-block.buffer,.tl-block.break{border:1.5px dashed var(--border);background:transparent;opacity:.6}
+.tl-block.current{border-color:transparent;box-shadow:0 0 0 3px var(--primary),0 8px 24px rgba(255,92,130,.18);transform:translateX(-2px)}
+.tl-block.past{opacity:.45}
+.tl-block.done{opacity:.5}
+.tl-block.done .tl-title{text-decoration:line-through;color:var(--text-3)}
+
+.tl-time{position:absolute;left:-54px;top:14px;font-family:'Playfair Display',serif;font-size:13px;font-weight:800;color:var(--text-2);letter-spacing:.3px}
+.tl-dot{position:absolute;left:-34px;top:18px;width:14px;height:14px;border-radius:50%;background:var(--card);border:3px solid var(--primary);box-shadow:0 0 0 2px var(--card);z-index:1}
+.tl-block.meeting .tl-dot{border-color:var(--gold)}
+.tl-block.prep .tl-dot,.tl-block.buffer .tl-dot,.tl-block.break .tl-dot{border-color:var(--text-3);background:var(--bg)}
+.tl-block.current .tl-dot{border-color:var(--primary);background:var(--primary);box-shadow:0 0 0 3px rgba(255,92,130,.28),0 0 0 2px var(--card)}
+.tl-block.past .tl-dot{border-color:var(--text-3)}
+
+.tl-body{min-width:0}
+.tl-hdr{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:4px}
+.tl-title{font-size:15px;font-weight:700;line-height:1.3;flex:1;word-wrap:break-word}
+.tl-dur{font-size:11px;font-weight:700;color:var(--text-3);flex-shrink:0}
+.tl-sub{font-size:12px;color:var(--text-2);display:flex;align-items:center;flex-wrap:wrap;gap:4px;margin-bottom:6px}
+.tl-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.tl-a{min-height:36px;padding:7px 14px;border:1.5px solid var(--border);border-radius:10px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;background:var(--card);color:var(--text-2);transition:all .15s}
+.tl-a:hover{border-color:var(--primary);color:var(--primary)}
+.tl-a:active{transform:scale(.96)}
+.tl-a-hero{background:var(--sunset);color:#fff;border-color:transparent;box-shadow:0 3px 10px rgba(255,92,130,.28)}
+.tl-a-hero:hover{color:#fff;box-shadow:0 5px 14px rgba(255,92,130,.4)}
+.tl-a-ok{background:var(--green);color:#fff;border-color:var(--green)}
+.tl-a-ok:hover{color:#fff;background:#2A9E5E}
+.tl-a-del{padding:7px 11px;color:var(--text-3);margin-left:auto}
+.tl-a-del:hover{background:var(--danger-lt);color:var(--danger);border-color:var(--danger)}
+
 /* DECISIONS */
 .dec-card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);padding:16px 44px 16px 20px;margin-bottom:10px;position:relative;transition:all .18s}
 .dec-card:hover{border-color:var(--primary-lt);box-shadow:var(--shadow)}
@@ -644,7 +695,7 @@ async function idbGetAllKeys(store){
 // ══════════════════════════════════════
 // STATE
 // ══════════════════════════════════════
-const DEFAULT_STATE={tasks:[],meetings:[],decisions:[],milestones:[{id:'ms-uat',name:'UAT Opens',date:'2026-05-18'},{id:'ms-go',name:'Go Live',date:'2026-06-16'}],completionLog:{},emails:[],brainFile:null,apiKey:'',lastDate:TD(),chatHistory:{}};
+const DEFAULT_STATE={tasks:[],meetings:[],decisions:[],milestones:[{id:'ms-uat',name:'UAT Opens',date:'2026-05-18'},{id:'ms-go',name:'Go Live',date:'2026-06-16'}],completionLog:{},emails:[],brainFile:null,apiKey:'',lastDate:TD(),chatHistory:{},schedule:{}};
 let S={...DEFAULT_STATE};
 
 async function loadState(){
@@ -1629,6 +1680,97 @@ async function restoreBackup(key){
 setInterval(autoBackup,BACKUP_INTERVAL);
 
 // ══════════════════════════════════════
+// DAY PLANNER — AI builds a timetable
+// ══════════════════════════════════════
+const WORKDAY_START='09:00',WORKDAY_END='17:00';
+function toMin(hm){if(!hm||typeof hm!=='string')return 0;const p=hm.split(':');return (parseInt(p[0])||0)*60+(parseInt(p[1])||0)}
+function fromMin(m){const h=Math.floor(m/60),mm=m%60;return String(h).padStart(2,'0')+':'+String(mm).padStart(2,'0')}
+function nowMin(){const n=new Date();return n.getHours()*60+n.getMinutes()}
+
+let _planningDay=false;
+async function buildDayPlan(){
+  if(!S.apiKey){toast('Need API key in Settings.');return}
+  if(_planningDay)return;
+  _planningDay=true;
+  const btn=document.querySelector('[data-plan-btn]');if(btn){btn.disabled=true;btn.textContent='📅 Planning…'}
+  try{
+    const td=TD();
+    const active=liveTasks().filter(t=>t.active&&!t.done).map(t=>({id:t.id,title:t.title,effort:t.effort||'medium',priority:t.priority||'medium',due:t.due||'',rolled:t.rolled||0,category:t.category,notes:(t.notes||'').slice(0,180)}));
+    const backlog=liveTasks().filter(t=>!t.active&&!t.done).map(t=>({...t,_score:scoreTask(t)})).sort((a,b)=>b._score-a._score).slice(0,8).map(t=>({id:t.id,title:t.title,score:t._score,effort:t.effort||'medium',priority:t.priority||'medium',due:t.due||'',category:t.category}));
+    const meetings=S.meetings.filter(m=>new Date(m.date).toDateString()===new Date().toDateString()).sort((a,b)=>new Date(a.date)-new Date(b.date)).map(m=>{const d=new Date(m.date);return{id:m.id,title:m.title,start:d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0'),duration:parseInt(m.duration)||30,attendees:m.attendees||''}});
+    const nowHM=fromMin(nowMin());
+    const sys=`You are Sarah's scheduler — best-mate tone, bitchy but firm, never cruel. You build a real, executable day plan and defend it. Sarah over-plans and under-executes; your job is to decide FOR her.
+
+HARD RULES:
+- Workday is typically 09:00–17:00. Current time: ${nowHM}.
+- Schedule only from ${nowHM} onwards (or the start of the first unstarted meeting, whichever is earlier).
+- RULE OF 3 — non-negotiable: AT MOST 3 task blocks today. Pick from Active first; fill from the highest-scored Backlog if fewer than 3 are active.
+- Meetings go at their stated start times. Don't move them. Include them in the plan.
+- Add a 10-15m prep block before any cross-functional or Katharine/Marina/stakeholder-facing meeting.
+- Lunch block 12:30-13:30 unless a meeting is there (then shift it, or drop it past 14:30 and say so in the note).
+- Add a 10m buffer after meetings longer than 30m.
+- Effort → duration: small=25m, medium=60m, large=90m. Respect, don't over-inflate.
+- Mornings (before 12:00) = hardest/highest priority/highest score task.
+- Afternoon = admin, chases, short items. Keep afternoons lighter.
+- If it's already late (past 15:00), cut to one or two realistic blocks. Don't lie about what can be done.
+- Use real task IDs from Active/Backlog arrays; real meeting IDs from Meetings array.
+
+VOICE for 'note' field (one line, max 90 chars): firm, British, slightly bitchy. Examples:
+- "Three blocks. Don't let Katharine hijack SRW time."
+- "Morning's yours — do the Simon chase before standup or it'll roll again."
+- "Late start, one big block. Stop faffing."
+Ban: "you've got this", generic encouragement.
+
+Context: ${buildCtx()}
+
+Return ONLY JSON, no markdown fences:
+{
+  "blocks":[
+    {"start":"HH:MM","end":"HH:MM","type":"task","taskId":"<id>","title":"<short title>"},
+    {"start":"HH:MM","end":"HH:MM","type":"meeting","meetingId":"<id>","title":"<short>"},
+    {"start":"HH:MM","end":"HH:MM","type":"prep","title":"Prep for X","note":"<optional one-liner>"},
+    {"start":"HH:MM","end":"HH:MM","type":"buffer","title":"Buffer"},
+    {"start":"HH:MM","end":"HH:MM","type":"break","title":"Lunch"}
+  ],
+  "note":"<one-line rationale>"
+}
+
+MEETINGS today: ${JSON.stringify(meetings)}
+ACTIVE tasks (${active.length}/3): ${JSON.stringify(active)}
+TOP BACKLOG (use if fewer than 3 active): ${JSON.stringify(backlog)}`;
+
+    const r=await callAI(sys,[{role:'user',content:'Plan today. Decide firmly. Include all meetings. JSON only.'}],2000);
+    let parsed;
+    try{parsed=JSON.parse(r.replace(/```json?|```/g,'').trim())}
+    catch(e){toast('Planner returned unparsable JSON');console.warn('Plan error:',r);return}
+    if(!parsed.blocks||!Array.isArray(parsed.blocks)){toast('Planner returned no blocks');return}
+    // Normalize: sort by start, enforce Rule of 3
+    parsed.blocks=parsed.blocks.filter(b=>b&&b.start&&b.end).sort((a,b)=>toMin(a.start)-toMin(b.start));
+    let taskCount=0;
+    parsed.blocks=parsed.blocks.filter(b=>{if(b.type==='task'){taskCount++;return taskCount<=3}return true});
+    // Activate any scheduled task that isn't already
+    parsed.blocks.forEach(b=>{if(b.type==='task'&&b.taskId){const t=S.tasks.find(x=>x.id===b.taskId);if(t&&!t.active&&!t.done){t.active=true}}});
+    S.schedule[td]={blocks:parsed.blocks,note:parsed.note||'',builtAt:new Date().toISOString()};
+    save();render();toast('📅 Day planned');
+  }catch(e){toast('Planner failed: '+e.message)}
+  finally{_planningDay=false}
+}
+
+function blockFocus(taskId){if(taskId)openFocus(taskId)}
+function blockComplete(taskId){
+  const t=S.tasks.find(x=>x.id===taskId);if(!t)return;
+  t.done=true;t.doneDate=TD();t.active=false;
+  save();render();
+  const n=liveTasks().filter(x=>x.done&&x.doneDate===TD()).length;
+  toast(n===3?'3/3. Go off. ✨':n===2?'2/3. One more.':'Done. '+(3-n)+' to go.');
+}
+function blockRemove(idx){
+  const td=TD();const plan=S.schedule[td];if(!plan)return;
+  plan.blocks.splice(idx,1);save();render();toast('Block removed');
+}
+function blockOpenMeeting(id){openMtgDetail(id)}
+
+// ══════════════════════════════════════
 // RENDER — TODAY
 // ══════════════════════════════════════
 function rToday(){
@@ -1651,39 +1793,93 @@ function rToday(){
     +'<div class="stat-pill"><span class="sp-n" style="color:var(--danger)">'+lt.filter(t=>!t.done&&t.due&&new Date(t.due)<new Date()).length+'</span><span class="sp-l">Overdue</span></div>'
     +'<div class="stat-pill"><span class="sp-n" style="color:var(--info)">'+S.meetings.filter(m=>{const d=new Date(m.date);const w=new Date();w.setDate(w.getDate()+7);return d>=new Date(TD())&&d<=w}).length+'</span><span class="sp-l">Meetings this week</span></div></div>';
 
-  // Active tasks
-  h+='<div class="sec-lbl">🎀 Active Tasks ('+active.length+'/3)<span class="sec-line"></span></div>';
-  if(!active.length&&doneToday.length<3){
-    const empties=['Empty active list. Either pick 3 or go for a walk — both are decisions.','No active tasks. The backlog\'s waiting. Three. Now.','Zero active. Tomorrow Sarah will not thank present Sarah.','Nothing on the slate. Open Tasks, pick the one you\'ve been dodging.'];
-    h+='<div class="empty-card"><div class="empty-msg">'+esc(empties[Math.floor(Math.random()*empties.length)])+'</div><button class="btn btn-p" onclick="showTab(\'tasks\')">Pick from backlog →</button></div>';
-  }
-  active.forEach(t=>{
-    const sc=scoreTask(t);const stale=(t.rolled||0)>=3?'ancient':(t.rolled||0)>=2?'stale':'';
-    const cat=CATS[t.category]||{l:t.category,c:'cat-admin'};
-    h+='<div class="active-card '+stale+'"><div class="score '+scoreClass(sc)+'">'+sc+'</div>'
-      +'<div class="ac-top"><span class="ac-cat '+cat.c+'">'+cat.l+'</span>'+(t.rolled?'<span class="ac-roll">🔄×'+t.rolled+'</span>':'')+'</div>'
-      +'<div class="ac-title">'+esc(t.title)+'</div>'
-      +(t.notes?'<div class="ac-desc">'+esc(t.notes.substring(0,80))+'</div>':'')
-      +'<div class="ac-meta"><span>'+(t.effort==='small'?'⚡ Quick':t.effort==='large'?'🏋️ Big':'⏱ Medium')+'</span>'
-      +(t.due?'<span>📅 '+fmtD(t.due)+'</span>':'')
-      +(t.attachments&&t.attachments.length?'<span>📎 '+t.attachments.length+'</span>':'')
-      +'<span>Day '+Math.round((new Date()-new Date(t.created))/864e5+1)+'</span></div>';
-    h+='<div class="st">';
-    if(t.subtasks&&t.subtasks.length){t.subtasks.forEach((s,i)=>{h+='<div class="st-item'+(s.done?' checked':'')+'"><input type="checkbox" '+(s.done?'checked':'')+' onchange="toggleSub(\''+t.id+'\','+i+')"><span>'+esc(s.text)+'</span></div>'})}
-    h+='<input class="st-quickadd" data-tid="'+t.id+'" placeholder="+ Add a step…" onkeydown="if(event.key===\'Enter\'){quickAddSub(\''+t.id+'\',this)}"></div>';
-    h+='<div class="ac-actions"><button class="ac-btn hero" onclick="openFocus(\''+t.id+'\')" style="flex:1;min-width:160px">🔥 Focus on this</button>'
-      +'<button class="ac-btn done" onclick="completeTask(\''+t.id+'\')">✓ Done</button>'
-      +'<button class="ac-btn icon" onclick="openTD(\''+t.id+'\')" title="Edit">⋯</button></div></div>';
-  });
+  // Day plan
+  h+=rDayTimeline();
 
   // Done today
   if(doneToday.length){h+='<div class="sec-lbl">✅ Done Today<span class="sec-line"></span></div>';
-    doneToday.forEach(t=>{h+='<div style="padding:8px 12px;background:var(--green-lt);border:1px solid var(--green);border-radius:var(--radius-sm);margin-bottom:4px;font-size:11px"><span style="text-decoration:line-through;color:var(--green)">'+esc(t.title)+'</span></div>'})}
-
-  // Upcoming
-  h+=rUpcoming();
+    doneToday.forEach(t=>{h+='<div style="padding:10px 14px;background:var(--green-lt);border:1.5px solid #B8E6C8;border-radius:12px;margin-bottom:6px;font-size:13px;font-weight:600"><span style="text-decoration:line-through;color:var(--green)">'+esc(t.title)+'</span></div>'})}
 
   I('p-today').innerHTML=h;
+}
+
+function rDayTimeline(){
+  const td=TD();
+  const plan=S.schedule?.[td];
+  const now=new Date();
+  const curMin=now.getHours()*60+now.getMinutes();
+  let h='';
+
+  // Header: Right Now + Replan
+  if(plan&&plan.blocks?.length){
+    const current=plan.blocks.find(b=>{const s=toMin(b.start),e=toMin(b.end);return curMin>=s&&curMin<e});
+    const next=plan.blocks.find(b=>toMin(b.start)>curMin);
+    let rightNow='';
+    if(current){
+      const end=toMin(current.end);const left=Math.max(0,end-curMin);
+      rightNow='<div class="rn-lbl">RIGHT NOW</div><div class="rn-title">'+esc(current.title)+'</div><div class="rn-meta">'+current.start+'–'+current.end+' · '+left+' min left</div>';
+      if(current.type==='task'&&current.taskId){rightNow+='<button class="btn btn-p" onclick="blockFocus(\''+current.taskId+'\')" style="margin-top:10px">🔥 Focus on this</button>'}
+      else if(current.type==='meeting'&&current.meetingId){rightNow+='<button class="btn btn-s" onclick="blockOpenMeeting(\''+current.meetingId+'\')" style="margin-top:10px">Open meeting</button>'}
+    } else if(next){
+      const until=toMin(next.start)-curMin;
+      rightNow='<div class="rn-lbl">UP NEXT · '+until+' min</div><div class="rn-title">'+esc(next.title)+'</div><div class="rn-meta">Starts '+next.start+'</div>';
+    } else {
+      rightNow='<div class="rn-lbl">DAY DONE</div><div class="rn-title">No more blocks scheduled</div>';
+    }
+    h+='<div class="rn-card">'+rightNow+'</div>';
+
+    if(plan.note)h+='<div class="tl-note">💅 '+esc(plan.note)+'</div>';
+
+    // Controls
+    h+='<div class="tl-ctrls"><button class="btn btn-s btn-sm" onclick="buildDayPlan()" data-plan-btn>🔄 Replan</button>'
+      +'<span class="tl-ctrls-meta">Built '+new Date(plan.builtAt).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})+'</span></div>';
+
+    // Timeline
+    h+='<div class="tl-wrap"><div class="tl-rail"></div>';
+    // Current time marker
+    const firstMin=toMin(plan.blocks[0].start);const lastMin=toMin(plan.blocks[plan.blocks.length-1].end);
+    if(curMin>=firstMin&&curMin<=lastMin+30){
+      const ratio=(curMin-firstMin)/(lastMin-firstMin||1);
+      h+='<div class="tl-now" style="top:calc('+(ratio*100)+'% - 9px)" title="Now: '+fromMin(curMin)+'"></div>';
+    }
+    plan.blocks.forEach((b,idx)=>{
+      const sMin=toMin(b.start),eMin=toMin(b.end);
+      const isCurrent=curMin>=sMin&&curMin<eMin;
+      const isPast=curMin>=eMin;
+      const task=b.taskId?S.tasks.find(x=>x.id===b.taskId):null;
+      const isDone=task?.done;
+      const cls=['tl-block',b.type,isCurrent?'current':'',isPast?'past':'',isDone?'done':''].filter(Boolean).join(' ');
+      const ic=b.type==='task'?'':b.type==='meeting'?'👥 ':b.type==='prep'?'📝 ':b.type==='break'?'🍽 ':'·';
+      const mins=eMin-sMin;
+      h+='<div class="'+cls+'">';
+      h+='<div class="tl-time">'+b.start+'</div><div class="tl-dot"></div>';
+      h+='<div class="tl-body">';
+      h+='<div class="tl-hdr"><div class="tl-title">'+esc(ic+b.title)+'</div><div class="tl-dur">'+mins+'m</div></div>';
+      if(task){const cat=CATS[task.category]||{l:task.category,c:'cat-admin'};h+='<div class="tl-sub"><span class="ac-cat '+cat.c+'">'+cat.l+'</span>'+(task.rolled?'<span class="ac-roll" style="margin-left:8px">🔄×'+task.rolled+'</span>':'')+(task.due?'<span style="margin-left:8px;font-size:11px;color:var(--text-3)">📅 '+fmtD(task.due)+'</span>':'')+'</div>'}
+      else if(b.note)h+='<div class="tl-sub" style="color:var(--text-3);font-size:12px">'+esc(b.note)+'</div>';
+      // actions
+      const actions=[];
+      if(b.type==='task'&&task&&!task.done){
+        actions.push('<button class="tl-a tl-a-hero" onclick="blockFocus(\''+task.id+'\')">🔥 Focus</button>');
+        actions.push('<button class="tl-a tl-a-ok" onclick="blockComplete(\''+task.id+'\')">✓ Done</button>');
+      }
+      if(b.type==='meeting'&&b.meetingId){
+        actions.push('<button class="tl-a" onclick="blockOpenMeeting(\''+b.meetingId+'\')">Open</button>');
+      }
+      actions.push('<button class="tl-a tl-a-del" onclick="blockRemove('+idx+')" title="Remove block">✕</button>');
+      if(actions.length)h+='<div class="tl-actions">'+actions.join('')+'</div>';
+      h+='</div></div>';
+    });
+    h+='</div>';
+  } else {
+    // No plan — prompt to build one
+    const hasActive=liveTasks().some(t=>t.active&&!t.done);
+    const todaysMtgs=S.meetings.filter(m=>new Date(m.date).toDateString()===new Date().toDateString()).length;
+    h+='<div class="empty-card"><div class="empty-msg">No plan for today yet. Let me build it around your '+todaysMtgs+' meeting'+(todaysMtgs===1?'':'s')+(hasActive?' and your active tasks':' and the top of your backlog')+'.</div>'
+      +'<button class="btn btn-p" onclick="buildDayPlan()" data-plan-btn>📅 Plan my day</button>'
+      +(S.apiKey?'':'<div style="font-size:11px;color:var(--text-3);margin-top:8px">Needs your API key — Settings</div>')+'</div>';
+  }
+  return h;
 }
 
 function rUpcoming(){
@@ -1903,6 +2099,8 @@ function init(){
   I('tabBar').innerHTML=TABS.map(t=>'<button class="tab'+(t.id==='today'?' on':'')+'" data-tab="'+t.id+'" onclick="showTab(\''+t.id+'\')">'+t.l+'</button>').join('');
   I('hdr-date')?.remove();
   render();
+  // Keep the day timeline fresh — re-render Today every minute so "Right Now" and "min left" update
+  setInterval(()=>{if(_curTab==='today'&&!I('m-focus')?.classList.contains('open'))rToday()},60000);
 }
 loadState().then(init).catch(e=>{console.warn('Boot failed, using defaults:',e);init()});
 
