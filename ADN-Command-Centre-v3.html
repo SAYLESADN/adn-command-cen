@@ -136,6 +136,16 @@ body::before{content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;ba
 .empty-card{background:var(--card);border:2px dashed var(--border);border-radius:var(--radius);padding:32px 22px;text-align:center;margin-bottom:14px}
 .empty-msg{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--text-2);margin-bottom:18px;line-height:1.35}
 
+/* DECISIONS */
+.dec-card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);padding:16px 44px 16px 20px;margin-bottom:10px;position:relative;transition:all .18s}
+.dec-card:hover{border-color:var(--primary-lt);box-shadow:var(--shadow)}
+.dec-card::before{content:'';position:absolute;top:0;left:0;width:5px;height:100%;background:var(--sunset);border-radius:var(--radius) 0 0 var(--radius)}
+.dec-date{font-size:11px;color:var(--text-3);font-weight:600;margin-bottom:6px;letter-spacing:.3px}
+.dec-text{font-size:15px;font-weight:700;line-height:1.4;margin-bottom:4px}
+.dec-ctx{font-size:13px;color:var(--text-2);line-height:1.55;margin-top:6px}
+.dec-del{position:absolute;top:12px;right:12px;width:32px;height:32px;border:none;background:transparent;color:var(--text-3);cursor:pointer;font-size:14px;border-radius:8px;transition:all .15s}
+.dec-del:hover{background:var(--danger-lt);color:var(--danger)}
+
 /* BACKLOG ITEMS */
 .bl-item{display:flex;align-items:center;gap:14px;padding:16px 18px;min-height:72px;background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);margin-bottom:10px;transition:all .2s;cursor:pointer}
 .bl-item:hover{box-shadow:var(--shadow);border-color:var(--primary-lt);transform:translateY(-1px)}
@@ -301,6 +311,41 @@ textarea.inp{min-height:90px;resize:vertical;line-height:1.55}
 /* BULK */
 .bulk-bar{position:sticky;bottom:16px;background:var(--navy);color:#fff;padding:10px 16px;border-radius:12px;display:none;align-items:center;justify-content:space-between;box-shadow:0 8px 30px rgba(45,42,38,.08);z-index:50;max-width:600px;margin:0 auto;font-size:12px}
 .bulk-bar.show{display:flex}
+
+/* FOCUS MODE */
+.focus-bg{position:fixed;inset:0;background:var(--bg);z-index:600;display:none;flex-direction:column;animation:focusIn .28s ease-out}
+.focus-bg.open{display:flex}
+@keyframes focusIn{from{opacity:0;transform:scale(.98)}to{opacity:1;transform:scale(1)}}
+.focus-hdr{display:flex;align-items:center;gap:14px;padding:16px 20px;background:var(--sunset);color:#fff;box-shadow:0 4px 14px rgba(255,92,130,.18)}
+.focus-close{width:44px;height:44px;border:none;border-radius:14px;background:rgba(255,255,255,.18);color:#fff;font-size:18px;font-weight:800;cursor:pointer;flex-shrink:0;backdrop-filter:blur(4px);transition:background .15s}
+.focus-close:hover{background:rgba(255,255,255,.28)}
+.focus-timer{flex:1;text-align:center;font-family:'Playfair Display',serif;font-size:28px;font-weight:800;letter-spacing:1px;font-variant-numeric:tabular-nums}
+.focus-timer .ft-sub{display:block;font-family:'DM Sans',sans-serif;font-size:10px;font-weight:600;letter-spacing:1.5px;opacity:.8;text-transform:uppercase;margin-top:2px}
+.focus-body{flex:1;overflow-y:auto;padding:20px 22px 100px;max-width:720px;margin:0 auto;width:100%}
+.focus-cat{margin-bottom:10px}
+.focus-title{font-family:'Playfair Display',serif;font-size:32px;font-weight:700;line-height:1.15;margin-bottom:10px;color:var(--text)}
+.focus-meta{font-size:13px;color:var(--text-2);font-weight:600;display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.focus-notes{font-size:14px;line-height:1.65;color:var(--text-2);background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-bottom:18px;white-space:pre-wrap}
+.focus-sub{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--card);border:1.5px solid var(--border);border-radius:12px;margin-bottom:6px;min-height:52px;transition:all .15s}
+.focus-sub:hover{border-color:var(--primary-lt);background:var(--primary-soft)}
+.focus-sub.done{background:var(--green-lt);border-color:#B8E6C8}
+.focus-sub.done .focus-sub-txt{text-decoration:line-through;color:var(--text-3)}
+.focus-sub input[type=checkbox]{width:24px;height:24px;accent-color:var(--primary);cursor:pointer;flex-shrink:0}
+.focus-sub-txt{flex:1;font-size:15px;line-height:1.4}
+.focus-sub-del{width:34px;height:34px;border:none;background:transparent;color:var(--text-3);cursor:pointer;font-size:16px;border-radius:8px;flex-shrink:0;transition:all .15s}
+.focus-sub-del:hover{background:var(--danger-lt);color:var(--danger)}
+.focus-chat{margin-top:22px;border-top:2px dashed var(--border);padding-top:18px}
+.focus-chat-lbl{font-size:11px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:var(--text-3);margin-bottom:10px}
+.focus-chat-msgs{max-height:320px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding:4px 2px;margin-bottom:12px}
+.focus-chat-empty{text-align:center;color:var(--text-3);font-size:13px;padding:18px 12px;line-height:1.5}
+.focus-chat-row{display:flex;gap:8px;align-items:center}
+.focus-chat-input{flex:1;min-height:46px;padding:12px 16px;border:1.5px solid var(--border);border-radius:24px;font-family:inherit;font-size:15px;outline:none;background:var(--card);transition:border-color .15s}
+.focus-chat-input:focus{border-color:var(--primary)}
+.focus-chat-send{width:46px;height:46px;border:none;border-radius:50%;background:var(--sunset);color:#fff;font-size:18px;font-weight:800;cursor:pointer;box-shadow:0 4px 12px rgba(255,92,130,.28);flex-shrink:0;transition:transform .15s}
+.focus-chat-send:active{transform:scale(.92)}
+.focus-actions{position:fixed;bottom:0;left:0;right:0;padding:14px 20px 22px;background:linear-gradient(180deg,rgba(255,247,242,0) 0%,var(--bg) 30%);display:flex;gap:10px;z-index:2}
+.focus-actions .btn{flex:1;min-height:56px;font-size:16px;max-width:720px;margin:0 auto}
+.focus-done{background:var(--sunset);color:#fff;box-shadow:0 6px 20px rgba(255,92,130,.36)}
 </style>
 </head>
 <body>
@@ -343,6 +388,7 @@ textarea.inp{min-height:90px;resize:vertical;line-height:1.55}
   <div class="pnl" id="p-schedule"></div>
   <div class="pnl" id="p-compose"></div>
   <div class="pnl" id="p-progress"></div>
+  <div class="pnl" id="p-decisions"></div>
   <div class="pnl" id="p-settings"></div>
 </div>
 
@@ -480,6 +526,34 @@ Action items:
   </div>
 </div>
 
+<!-- FOCUS MODE -->
+<div class="focus-bg" id="m-focus">
+  <div class="focus-hdr">
+    <button class="focus-close" onclick="closeFocus()" title="Close (doesn't complete the task)">✕</button>
+    <div class="focus-timer" id="focusTimer">00:00<span class="ft-sub">focus time</span></div>
+    <button class="focus-close" onclick="openTD(_focusTaskId)" title="Edit task">⋯</button>
+  </div>
+  <div class="focus-body">
+    <div class="focus-cat" id="focusCat"></div>
+    <h2 class="focus-title" id="focusTitle"></h2>
+    <div class="focus-meta" id="focusMeta"></div>
+    <div class="focus-notes" id="focusNotes" style="display:none"></div>
+    <div id="focusSubs"></div>
+    <input class="st-quickadd" id="focusQuickSub" placeholder="+ Add a step…" onkeydown="if(event.key==='Enter'){focusAddSub()}">
+    <div class="focus-chat">
+      <div class="focus-chat-lbl">💬 Chat — ask it to break it down, draft, or tick off steps</div>
+      <div class="focus-chat-msgs" id="focusChatMsgs"></div>
+      <div class="focus-chat-row">
+        <input class="focus-chat-input" id="focusChatInput" placeholder="Ask me something…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat()}">
+        <button class="focus-chat-send" onclick="sendChat()">→</button>
+      </div>
+    </div>
+  </div>
+  <div class="focus-actions">
+    <button class="btn focus-done" onclick="focusDone()">✓ Done</button>
+  </div>
+</div>
+
 <!-- PENCIL -->
 <div class="pencil-overlay" id="pencilOverlay">
   <div class="pencil-modal">
@@ -523,7 +597,7 @@ const uid=()=>'t'+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
 const fmtD=d=>{if(!d)return'';return new Date(d+'T12:00:00').toLocaleDateString('en-GB',{day:'numeric',month:'short'})};
 const daysTo=d=>Math.round((new Date(d)-new Date())/864e5);
 const CATS={project:{l:'Project',c:'cat-proj'},payroll:{l:'Payroll & Reward',c:'cat-pay'},risk:{l:'Risk / Blocker',c:'cat-risk'},stakeholder:{l:'Stakeholder',c:'cat-meet'},meeting:{l:'Meeting Action',c:'cat-meet'},change:{l:'Change & Comms',c:'cat-change'},admin:{l:'Admin',c:'cat-admin'}};
-const TABS=[{id:'today',l:'Today'},{id:'tasks',l:'Tasks'},{id:'schedule',l:'Schedule'},{id:'compose',l:'Compose'},{id:'progress',l:'Progress'},{id:'settings',l:'Settings'}];
+const TABS=[{id:'today',l:'Today'},{id:'tasks',l:'Tasks'},{id:'schedule',l:'Schedule'},{id:'compose',l:'Compose'},{id:'progress',l:'Progress'},{id:'decisions',l:'Decisions'},{id:'settings',l:'Settings'}];
 
 // ══════════════════════════════════════
 // INDEXEDDB WRAPPER
@@ -747,7 +821,13 @@ async function cmdRun(mode){
 }
 function showSass(h){I('sassContent').innerHTML=h;I('m-sass').classList.add('open')}
 function closeModal(id){I(id).classList.remove('open')}
-document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal-bg').forEach(m=>m.classList.remove('open'))});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    if(I('m-focus')?.classList.contains('open')){closeFocus();return}
+    document.querySelectorAll('.modal-bg').forEach(m=>m.classList.remove('open'));
+    if(I('chatDrawer')?.classList.contains('open'))closeChat();
+  }
+});
 
 // ══════════════════════════════════════
 // TASK CRUD
@@ -922,7 +1002,7 @@ function buildAttContent(t){
 // ══════════════════════════════════════
 // CHAT
 // ══════════════════════════════════════
-let _chatTaskId=null;
+let _chatTaskId=null,_focusTaskId=null,_focusStart=null,_focusTimerInt=null;
 
 // Tools the chat AI can call to mutate the current task
 const CHAT_TOOLS=[
@@ -930,7 +1010,11 @@ const CHAT_TOOLS=[
   {name:'complete_subtask',description:'Mark an existing subtask as done by matching a substring of its text (case-insensitive). Only call if the subtask already exists.',input_schema:{type:'object',properties:{match:{type:'string',description:'Unique substring of the subtask text to tick off'}},required:['match']}},
   {name:'update_notes',description:'Append to or replace the task notes. Use to capture decisions, links, names, context Sarah shares. Append by default; only replace if she explicitly asks to rewrite.',input_schema:{type:'object',properties:{mode:{type:'string',enum:['append','replace']},text:{type:'string'}},required:['mode','text']}},
   {name:'set_priority',description:'Change the priority of the current task.',input_schema:{type:'object',properties:{priority:{type:'string',enum:['high','medium','low']}},required:['priority']}},
-  {name:'set_due_date',description:'Set the due date (YYYY-MM-DD). Pass an empty string to clear it.',input_schema:{type:'object',properties:{due:{type:'string'}},required:['due']}}
+  {name:'set_due_date',description:'Set the due date (YYYY-MM-DD). Pass an empty string to clear it.',input_schema:{type:'object',properties:{due:{type:'string'}},required:['due']}},
+  {name:'set_effort',description:'Change the effort estimate.',input_schema:{type:'object',properties:{effort:{type:'string',enum:['small','medium','large']}},required:['effort']}},
+  {name:'mark_complete',description:'Mark the current task as done. Only call if Sarah clearly says she\'s finished, e.g. "I\'m done", "that\'s done", "all finished".',input_schema:{type:'object',properties:{}}},
+  {name:'demote_to_backlog',description:'Send the current task back to the backlog (removes it from the active 3). Use if Sarah explicitly says it can wait or isn\'t today\'s priority.',input_schema:{type:'object',properties:{}}},
+  {name:'log_decision',description:'Record a decision in the Decisions tab. Use when Sarah says "decided to…", "we agreed…", "going with…", or otherwise names a concrete choice that should be remembered.',input_schema:{type:'object',properties:{text:{type:'string',description:'The decision in one short sentence'},context:{type:'string',description:'Optional: who, why, what it affects'},owner:{type:'string',description:'Optional: who owns the decision'}},required:['text']}}
 ];
 
 function applyChatTool(name,input){
@@ -970,6 +1054,31 @@ function applyChatTool(name,input){
       t.due=d;
       return{ok:true,msg:'Due '+(d||'cleared'),chip:'✓ Due → '+(d||'cleared')};
     }
+    if(name==='set_effort'){
+      if(!['small','medium','large'].includes(input.effort))return{ok:false,msg:'Invalid effort',chip:'⚠ Invalid effort'};
+      t.effort=input.effort;
+      return{ok:true,msg:'Effort set to '+input.effort,chip:'✓ Effort → '+input.effort};
+    }
+    if(name==='mark_complete'){
+      if(t.done)return{ok:false,msg:'Already done',chip:'⚠ Already done'};
+      t.done=true;t.doneDate=TD();t.active=false;
+      // Banner a sunset toast outside the chat too
+      setTimeout(()=>{const n=liveTasks().filter(x=>x.done&&x.doneDate===TD()).length;toast(n===3?'3/3. Go off. ✨':n===2?'2/3. One more.':'Done. '+(3-n)+' to go.')},50);
+      if(_focusTaskId===_chatTaskId)setTimeout(closeFocus,600);
+      return{ok:true,msg:'Task marked complete',chip:'✅ Task complete'};
+    }
+    if(name==='demote_to_backlog'){
+      if(!t.active)return{ok:false,msg:'Already in backlog',chip:'⚠ Already in backlog'};
+      t.active=false;
+      if(_focusTaskId===_chatTaskId)setTimeout(closeFocus,600);
+      return{ok:true,msg:'Sent back to backlog',chip:'↓ Back to backlog'};
+    }
+    if(name==='log_decision'){
+      const text=(input.text||'').trim();if(!text)return{ok:false,msg:'Decision needs text',chip:'⚠ Empty decision'};
+      if(!S.decisions)S.decisions=[];
+      S.decisions.push({id:uid(),text,context:(input.context||'').trim(),owner:(input.owner||'').trim(),date:new Date().toISOString(),taskId:_chatTaskId});
+      return{ok:true,msg:'Decision logged',chip:'📌 Decision logged'};
+    }
     return{ok:false,msg:'Unknown tool: '+name,chip:'⚠ Unknown op'};
   }catch(e){return{ok:false,msg:'Error: '+e.message,chip:'⚠ '+e.message}}
 }
@@ -982,10 +1091,13 @@ Task: "${t.title}" (${(CATS[t.category]||{}).l||t.category} · effort ${t.effort
 ${attNames||''}
 
 Tools — USE THEM, don't just describe:
-- add_subtasks: whenever you break the task down or produce a plan, ADD the subtasks. Don't paste a bullet list in text — call the tool.
+- add_subtasks: whenever you break the task down or produce a plan, ADD them. Don't paste a bullet list in text — call the tool.
 - complete_subtask: when Sarah says one's done, tick it off.
 - update_notes (append by default): capture decisions, names, context Sarah shares. Replace only if she explicitly asks.
-- set_priority / set_due_date: if she names a new priority or deadline, update them.
+- set_priority / set_due_date / set_effort: if she names a new priority, deadline, or effort level, update.
+- mark_complete: ONLY when she clearly says the WHOLE task is done ("I'm done", "all finished"). Never call this after ticking a single subtask — that's just progress.
+- demote_to_backlog: if she says this isn't today's priority, send it back to the backlog.
+- log_decision: when Sarah names a concrete decision ("we're going with X", "decided to do Y"), log it. One sentence.
 
 After calling a tool, do NOT re-list what you just added — the user sees a confirmation chip. Just comment briefly or ask the next thing.
 
@@ -995,6 +1107,11 @@ Days to UAT: ${daysTo('2026-05-18')}. Days to Go Live: ${daysTo('2026-06-16')}.
 Reply max 250 words.`;
 }
 
+// Chat can render into either the drawer or the Focus Mode pane
+function chatCtx(){
+  if(_focusTaskId)return{msgsId:'focusChatMsgs',inputId:'focusChatInput'};
+  return{msgsId:'chatMsgs',inputId:'chatInput'};
+}
 function openChat(tid){
   const t=S.tasks.find(x=>x.id===tid);if(!t)return;_chatTaskId=tid;
   I('chatTaskTitle').textContent=t.title;
@@ -1004,24 +1121,112 @@ function openChat(tid){
   setTimeout(()=>I('chatInput').focus(),300);
 }
 function closeChat(){I('chatOverlay').classList.remove('open');I('chatDrawer').classList.remove('open')}
+
+// ── FOCUS MODE ──
+function openFocus(tid){
+  const t=S.tasks.find(x=>x.id===tid);if(!t)return;
+  _focusTaskId=tid;_chatTaskId=tid;
+  _focusStart=Date.now();
+  if(!S.chatHistory[tid])S.chatHistory[tid]=[];
+  renderFocus();
+  I('m-focus').classList.add('open');
+  if(_focusTimerInt)clearInterval(_focusTimerInt);
+  tickFocus();
+  _focusTimerInt=setInterval(tickFocus,1000);
+  setTimeout(()=>I('focusChatInput')?.focus(),200);
+}
+function closeFocus(){
+  I('m-focus').classList.remove('open');
+  if(_focusTimerInt){clearInterval(_focusTimerInt);_focusTimerInt=null}
+  _focusTaskId=null;
+}
+function tickFocus(){
+  if(!_focusStart)return;
+  const s=Math.floor((Date.now()-_focusStart)/1000);
+  const hh=Math.floor(s/3600),mm=Math.floor((s%3600)/60),ss=s%60;
+  const text=(hh?String(hh).padStart(2,'0')+':':'')+String(mm).padStart(2,'0')+':'+String(ss).padStart(2,'0');
+  const el=I('focusTimer');if(el)el.childNodes[0].nodeValue=text;
+}
+function renderFocus(){
+  const t=_focusTaskId?S.tasks.find(x=>x.id===_focusTaskId):null;
+  if(!t){closeFocus();return}
+  const cat=CATS[t.category]||{l:t.category,c:'cat-admin'};
+  I('focusCat').innerHTML='<span class="ac-cat '+cat.c+'">'+cat.l+'</span>'+(t.rolled?'<span class="ac-roll" style="margin-left:8px">🔄×'+t.rolled+'</span>':'');
+  I('focusTitle').textContent=t.title;
+  const metaBits=[];
+  metaBits.push('<span>'+(t.effort==='small'?'⚡ Quick':t.effort==='large'?'🏋️ Big':'⏱ Medium')+'</span>');
+  if(t.due)metaBits.push('<span>📅 '+fmtD(t.due)+'</span>');
+  if(t.priority&&t.priority!=='medium')metaBits.push('<span style="color:'+(t.priority==='high'?'var(--danger)':'var(--text-3)')+'">● '+t.priority+'</span>');
+  metaBits.push('<span>Day '+Math.round((new Date()-new Date(t.created))/864e5+1)+'</span>');
+  if(t.timeSpent)metaBits.push('<span>⏲ '+t.timeSpent+'m so far</span>');
+  I('focusMeta').innerHTML=metaBits.join('');
+  const notesEl=I('focusNotes');
+  if(t.notes){notesEl.textContent=t.notes;notesEl.style.display='block'}else{notesEl.style.display='none'}
+  let sh='';
+  if(t.subtasks&&t.subtasks.length){
+    t.subtasks.forEach((s,i)=>{
+      sh+='<div class="focus-sub'+(s.done?' done':'')+'">'
+        +'<input type="checkbox" '+(s.done?'checked':'')+' onchange="focusToggleSub('+i+')">'
+        +'<span class="focus-sub-txt">'+esc(s.text)+'</span>'
+        +'<button class="focus-sub-del" onclick="focusDelSub('+i+')" title="Delete step">✕</button>'
+        +'</div>';
+    });
+  }
+  I('focusSubs').innerHTML=sh;
+  renderChat();
+}
+function focusAddSub(){
+  const inp=I('focusQuickSub');const v=(inp.value||'').trim();if(!v)return;
+  const t=S.tasks.find(x=>x.id===_focusTaskId);if(!t)return;
+  if(!t.subtasks)t.subtasks=[];
+  t.subtasks.push({text:v,done:false});inp.value='';save();renderFocus();
+  setTimeout(()=>I('focusQuickSub')?.focus(),20);
+}
+function focusToggleSub(i){
+  const t=S.tasks.find(x=>x.id===_focusTaskId);if(!t||!t.subtasks)return;
+  t.subtasks[i].done=!t.subtasks[i].done;save();renderFocus();render();
+}
+function focusDelSub(i){
+  const t=S.tasks.find(x=>x.id===_focusTaskId);if(!t||!t.subtasks)return;
+  t.subtasks.splice(i,1);save();renderFocus();render();
+}
+function focusDone(){
+  const t=S.tasks.find(x=>x.id===_focusTaskId);if(!t){closeFocus();return}
+  const mins=_focusStart?Math.max(1,Math.round((Date.now()-_focusStart)/60000)):0;
+  if(mins){t.timeSpent=(t.timeSpent||0)+mins}
+  t.done=true;t.doneDate=TD();t.active=false;
+  save();closeFocus();render();
+  const n=liveTasks().filter(x=>x.done&&x.doneDate===TD()).length;
+  toast(n===3?'3/3. Go off. ✨':n===2?'2/3. One more.':'Done'+(mins?' in '+mins+'m':'')+'. '+(3-n)+' to go.');
+}
 function renderChat(){
+  const ctx=chatCtx();
+  const target=I(ctx.msgsId);if(!target)return;
   const msgs=S.chatHistory[_chatTaskId]||[];
-  let h='<div class="chat-msg ai">Right. Tell me what\'s actually in the way — not the plan, the block.</div>';
+  let h='';
+  if(ctx.msgsId==='chatMsgs'){
+    h+='<div class="chat-msg ai">Right. Tell me what\'s actually in the way — not the plan, the block.</div>';
+  }else if(!msgs.length){
+    h+='<div class="focus-chat-empty">Ask me to break it down, draft something, or tick off a step as you go.</div>';
+  }
   msgs.forEach(m=>{
     if(m.role==='op')h+='<div class="chat-op">'+esc(m.content)+'</div>';
     else h+='<div class="chat-msg '+(m.role==='user'?'user':'ai')+'">'+esc(m.content).replace(/\n/g,'<br>')+'</div>';
   });
-  I('chatMsgs').innerHTML=h;I('chatMsgs').scrollTop=I('chatMsgs').scrollHeight;
+  target.innerHTML=h;target.scrollTop=target.scrollHeight;
 }
-function chatQ(msg){I('chatInput').value=msg;sendChat()}
+function chatQ(msg){const ctx=chatCtx();const inp=I(ctx.inputId);if(!inp)return;inp.value=msg;sendChat()}
 async function sendChat(){
-  const inp=I('chatInput').value.trim();if(!inp||!_chatTaskId)return;
+  const ctx=chatCtx();
+  const inputEl=I(ctx.inputId);if(!inputEl)return;
+  const inp=inputEl.value.trim();if(!inp||!_chatTaskId)return;
   const t=S.tasks.find(x=>x.id===_chatTaskId);if(!t)return;
   if(!S.apiKey){toast('Need API key in Settings.');return}
   if(!S.chatHistory[_chatTaskId])S.chatHistory[_chatTaskId]=[];
   S.chatHistory[_chatTaskId].push({role:'user',content:inp});
-  I('chatInput').value='';renderChat();
-  const showLoading=()=>{const existing=document.getElementById('chatLoading');if(existing)return;const el=document.createElement('div');el.className='chat-msg ai';el.id='chatLoading';el.style.color='var(--text-3)';el.style.fontStyle='italic';el.textContent='Thinking…';I('chatMsgs').appendChild(el);I('chatMsgs').scrollTop=I('chatMsgs').scrollHeight};
+  inputEl.value='';renderChat();
+  const targetEl=I(ctx.msgsId);
+  const showLoading=()=>{if(!targetEl)return;const existing=document.getElementById('chatLoading');if(existing)return;const el=document.createElement('div');el.className='chat-msg ai';el.id='chatLoading';el.style.color='var(--text-3)';el.style.fontStyle='italic';el.textContent='Thinking…';targetEl.appendChild(el);targetEl.scrollTop=targetEl.scrollHeight};
   const hideLoading=()=>{const ld=document.getElementById('chatLoading');if(ld)ld.remove()};
   showLoading();
 
@@ -1466,7 +1671,7 @@ function rToday(){
     h+='<div class="st">';
     if(t.subtasks&&t.subtasks.length){t.subtasks.forEach((s,i)=>{h+='<div class="st-item'+(s.done?' checked':'')+'"><input type="checkbox" '+(s.done?'checked':'')+' onchange="toggleSub(\''+t.id+'\','+i+')"><span>'+esc(s.text)+'</span></div>'})}
     h+='<input class="st-quickadd" data-tid="'+t.id+'" placeholder="+ Add a step…" onkeydown="if(event.key===\'Enter\'){quickAddSub(\''+t.id+'\',this)}"></div>';
-    h+='<div class="ac-actions"><button class="ac-btn hero" onclick="openChat(\''+t.id+'\')" style="flex:1;min-width:160px">💬 Work on this</button>'
+    h+='<div class="ac-actions"><button class="ac-btn hero" onclick="openFocus(\''+t.id+'\')" style="flex:1;min-width:160px">🔥 Focus on this</button>'
       +'<button class="ac-btn done" onclick="completeTask(\''+t.id+'\')">✓ Done</button>'
       +'<button class="ac-btn icon" onclick="openTD(\''+t.id+'\')" title="Edit">⋯</button></div></div>';
   });
@@ -1596,6 +1801,36 @@ function rProgress(){
 }
 
 // ══════════════════════════════════════
+// RENDER — DECISIONS
+// ══════════════════════════════════════
+function rDecisions(){
+  const decs=(S.decisions||[]).slice().sort((a,b)=>new Date(b.date)-new Date(a.date));
+  let h='<div class="card"><div class="card-t">Decision Log</div><div class="card-sub">'+decs.length+' decision'+(decs.length===1?'':'s')+' captured. Mostly from Copilot extracts — add more via the Copilot button or ask the chat to save one.</div>';
+  if(!decs.length){
+    h+='<div class="empty-card"><div class="empty-msg">Nothing captured yet. Paste a Copilot extract or have the chat log a decision for you.</div><button class="btn btn-p" onclick="openCopilot()">🤖 Paste Copilot extract</button></div>';
+  }else{
+    h+='</div>'; // close header card so decision cards can flow
+    decs.forEach(d=>{
+      const dt=new Date(d.date);const when=dt.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})+' · '+dt.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+      h+='<div class="dec-card">'
+        +'<div class="dec-date">'+when+(d.owner?' · '+esc(d.owner):'')+'</div>'
+        +'<div class="dec-text">'+esc(d.text)+'</div>'
+        +(d.context?'<div class="dec-ctx">'+esc(d.context)+'</div>':'')
+        +'<button class="dec-del" onclick="delDecision(\''+d.id+'\')" title="Delete">✕</button>'
+        +'</div>';
+    });
+    return I('p-decisions').innerHTML=h;
+  }
+  h+='</div>';
+  I('p-decisions').innerHTML=h;
+}
+function delDecision(id){
+  if(!S.decisions)return;
+  S.decisions=S.decisions.filter(d=>d.id!==id);
+  save();render();toast('Decision removed');
+}
+
+// ══════════════════════════════════════
 // RENDER — SETTINGS
 // ══════════════════════════════════════
 async function rSettings(){
@@ -1658,7 +1893,7 @@ function showTab(id){
 }
 function render(){
   rollover();
-  ({today:rToday,tasks:rTasks,schedule:rSchedule,compose:rCompose,progress:rProgress,settings:rSettings})[_curTab]?.();
+  ({today:rToday,tasks:rTasks,schedule:rSchedule,compose:rCompose,progress:rProgress,decisions:rDecisions,settings:rSettings})[_curTab]?.();
   const lt=liveTasks();
   const done=lt.filter(t=>t.done&&t.doneDate===TD()).length;
   const active=lt.filter(t=>t.active&&!t.done).length;
